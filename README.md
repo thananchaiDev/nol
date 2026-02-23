@@ -12,7 +12,7 @@ nol gives you a set of `/nol:*` commands that turn a feature description or bug 
 |---------|-------------|
 | `/nol:feature` | Plan a new feature using a 7-agent pipeline (slow, high quality) |
 | `/nol:quick` | Plan a small-to-medium task using a 3-phase pipeline: Research first, then Solution + Impact + Test in parallel (fast, good quality) |
-| `/nol:bugfix` | Debug and plan a bug fix in foreground (no background agents) |
+| `/nol:bugfix` | Investigate bug from live evidence (foreground), then research + rootcause + solution + test plan via background agents |
 | `/nol:recap` | Review planning progress and verify implementation status against the real codebase |
 | `/nol:approve` | Implement a plan from SOLUTION.md, run tests, and update SUMMARY.md |
 | `/nol:backlog` | Show all pending features, bugfixes, and quick tasks |
@@ -52,18 +52,27 @@ Step 4.5 (1×, bg, if ref): learn agent → .nol/mistake/YYYY-MM-DD.md
           /nol:recap (feedback loop)
 ```
 
-### `/nol:bugfix` — 1–2 background agents
+### `/nol:bugfix` — 4 background agents (sequential chain)
 
 ```
-NW-0:                     Read .nol/mistake/* + detect reference
+NW-0 (self):              Read .nol/mistake/* + detect reference
           ↓
-Foreground:               investigate → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md
+NW-1 (self):              Create BUG.md
           ↓
-NW-5.5 (1×, background):  test-manual agent → TEST_MANUAL.md
+NW-2 (self):              Investigate — live evidence only (logs, DevTools, no code reading)
+                          → Write RESEARCH.md (live evidence)
+          ↓
+NW-3 (background, wait):  bug-research agent → RESEARCH.md (full, with code findings)
+          ↓
+NW-4 (background, wait):  bug-rootcause agent → ROOTCAUSE.md
+          ↓
+NW-5 (background, wait):  bug-solution agent → SOLUTION.md
+          ↓
+NW-6 (background, wait):  test-manual agent → TEST_MANUAL.md
           ↓
           Write SUMMARY.md
           ↓
-NW-6.5 (1×, bg, if ref):  learn agent → .nol/mistake/YYYY-MM-DD.md
+NW-7.5 (background, no wait): learn agent → .nol/mistake/YYYY-MM-DD.md
           ↓
           feedback loop
 ```
@@ -146,7 +155,7 @@ claude plugin install nol
 
 ## Version
 
-Current version: **1.1.5** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
+Current version: **1.1.7** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
 
 ## File Structure
 
@@ -154,6 +163,9 @@ Current version: **1.1.5** — defined in both `.claude-plugin/plugin.json` and 
 commands/               Slash commands (/nol:<name>)
 agents/                 Sub-agents launched internally by commands
   learn.md              Records nol pipeline mistakes as lesson learned
+  bug-research.md       Digs codebase for bugs using live evidence as guide
+  bug-rootcause.md      Confirms root cause from research findings
+  bug-solution.md       Designs minimal fix from confirmed root cause
 .claude-plugin/
   plugin.json           Plugin metadata + version
   marketplace.json      Marketplace listing + version

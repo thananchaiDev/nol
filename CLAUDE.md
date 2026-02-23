@@ -27,6 +27,9 @@ Version is stored in **three files** — all must be updated together:
 commands/     — slash commands invoked by the user (/nol:<name>)
 agents/       — sub-agents launched by commands (internal)
   learn.md        — records nol pipeline mistakes as lesson learned
+  bug-research.md — digs codebase for bugs (launched by bugfix)
+  bug-rootcause.md — confirms root cause from research (launched by bugfix)
+  bug-solution.md  — designs minimal fix from rootcause (launched by bugfix)
 .claude-plugin/
   plugin.json       — plugin metadata + version
   marketplace.json  — marketplace listing + version
@@ -46,8 +49,8 @@ agents/       — sub-agents launched by commands (internal)
 ### `/nol:quick` (fast, good quality)
 5–6 agents: reads mistakes → Context → Research + Solution + Impact + Test-Manual (4 parallel) → writes SUMMARY.md → Learn (background, if references previous work) → calls `recap`
 
-### `/nol:bugfix` (mostly foreground, 1–2 background agents)
-reads mistakes + detects reference → Self: BUG.md → systematic-debugging skill → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md → Test-Manual (background) → TEST_MANUAL.md → SUMMARY.md → Learn (background, if references previous work) → NW-7 feedback loop
+### `/nol:bugfix` (investigate foreground + 4 background agents sequential)
+reads mistakes + detects reference → Self: BUG.md → Investigate live evidence (logs, DevTools, no code reading) → RESEARCH.md (live) → bug-research (bg, wait) → RESEARCH.md (full) → bug-rootcause (bg, wait) → ROOTCAUSE.md → bug-solution (bg, wait) → SOLUTION.md → test-manual (bg, wait) → TEST_MANUAL.md → SUMMARY.md → Learn (background, always) → NW-8 feedback loop
 
 ### `/nol:recap`
 Reads plan files + checks actual codebase to verify implementation status → feedback loop → recommends `approve`

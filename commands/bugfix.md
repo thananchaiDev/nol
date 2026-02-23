@@ -2,9 +2,9 @@
 description: "วิเคราะห์ debug และวางแผนแก้ bug"
 ---
 
-# Bugfix - Analyze & Plan a Bug Fix
+# Bugfix - Investigate & Plan a Bug Fix
 
-Debug ทันทีใน foreground ใช้ systematic-debugging skill — ไม่ใช้ background agents
+Investigate bug จากของจริง (logs, browser, network) ใน foreground → ส่งต่อให้ background agents วิเคราะห์ codebase, rootcause, solution, และ test plan
 
 ## Usage
 
@@ -32,7 +32,7 @@ Debug ทันทีใน foreground ใช้ systematic-debugging skill — 
 
 ## Instructions
 
-ใช้ `$ARGUMENTS` ทั้งหมดเป็น bug description — **ทำงานใน foreground ทั้งหมด ไม่ใช้ background sub-agents**
+ใช้ `$ARGUMENTS` ทั้งหมดเป็น bug description
 
 ---
 
@@ -82,180 +82,139 @@ Debug ทันทีใน foreground ใช้ systematic-debugging skill — 
    ## Fix Goal
    (จะถูก update ระหว่าง investigation)
    ```
-6. Report ให้ user รู้ว่ากำลังจะ debug ทันที: `"เริ่ม debug: {bug description}"`
+6. Report ให้ user รู้: `"เริ่ม investigate: {bug description}"`
 
 ---
 
-### NW-2: Apply Systematic Debugging Skill
+### NW-2: Investigate — Live Evidence เท่านั้น
 
-**Invoke the `systematic-debugging` skill** โดยทำงานใน foreground:
+> **สำคัญ:** phase นี้เน้นดูของจริง (logs, browser, network) เท่านั้น — **ห้ามอ่าน source code files** ในขั้นตอนนี้ ปล่อยให้ research agent ทำ
 
-```
-Use Skill tool: systematic-debugging
-```
+เก็บ live evidence ให้ครบ แล้วบันทึกลงใน `{BUGFIX_DIR}/RESEARCH.md`:
 
-ระหว่าง investigation ให้ปฏิบัติตาม systematic-debugging methodology ครบทุก phase:
-
-**Phase 1 — Root Cause Investigation:**
-- อ่าน Docker logs ก่อนเสมอ (per AGENTS.md): `docker logs --tail 300 <container>`
-- ตรวจ error messages, stack traces
-- Reproduce ให้ได้ก่อน
-- ตรวจ git history ล่าสุด
-- Trace data flow จาก entry point ถึง failure point
-
-**Phase 2 — Pattern Analysis:**
-- หา working examples ใน codebase เดียวกัน
-- Compare working vs broken
-
-**Phase 3 — Hypothesis:**
-- ตั้ง hypothesis ที่ชัดเจน: "Root cause คือ X เพราะ Y"
-- Test minimally
-
-**ทุกครั้งที่เจอข้อมูลสำคัญ** → append ลงใน `{BUGFIX_DIR}/RESEARCH.md` ทันที:
 ```markdown
 # Bug Research: {bug description}
 
-## Root Cause Hypothesis
-(update เมื่อมี hypothesis ที่ชัดเจน)
+## Live Evidence
 
-## Evidence
-- [file:line] {สิ่งที่เจอ}
+### Error Messages / Logs
+(Docker logs, stack traces, error output)
 
-## Data Flow Trace
-{trace จาก entry point → failure}
+### Reproduction Steps
+(สิ่งที่ทำแล้ว bug เกิด)
 
-## Pattern Comparison
-{working vs broken}
+### Expected vs Actual
+(ผลที่ควรได้ vs ผลที่ได้จริง)
 
-## Key Files Involved
-| File | Role |
-|------|------|
-| ... | ... |
+### Network Requests
+(API calls ที่เกี่ยวข้อง — method, path, request body, response, status code)
 
-## Open Questions
-(ถ้ายังมีสิ่งที่ไม่แน่ใจ)
+### Console Errors
+(browser console errors/warnings)
+
+### Screenshots
+(path ถ้ามี)
+
+### Key Signals
+(จุดที่น่าสงสัยที่สุดจาก evidence ข้างต้น)
 ```
 
----
+#### A. Docker Logs (ถ้า backend bug หรือไม่แน่ใจ):
 
-### NW-3: Live Reproduction ด้วย Chrome DevTools
+1. รัน `docker logs --tail 300 <container>` ผ่าน Bash
+2. บันทึก error messages, stack traces, หรือ log ที่เกี่ยวกับ bug
+3. ถ้าไม่มี Docker หรือ app ไม่ running → ข้ามไปเงียบๆ
 
-ก่อนอื่นให้ **ตรวจสอบว่า bug เป็น frontend หรือ backend** จาก bug description และ RESEARCH.md:
+#### B. Chrome DevTools Live Reproduction:
 
-- **Frontend** = ปัญหาเกี่ยวกับ UI, rendering, button, form, animation, state ที่แสดงผล
-- **Backend** = ปัญหาเกี่ยวกับ API response, database, logic ฝั่ง server, validation
+1. ใช้ `mcp__chrome-devtools__list_pages` ดูว่ามี browser เปิดอยู่ไหม
+2. ถ้าไม่มี → ข้ามขั้นตอนนี้ไปเงียบๆ
+3. ถ้ามี → `mcp__chrome-devtools__select_page` เลือก page ที่เกี่ยวข้อง
 
-#### ถ้าเป็น Frontend Bug:
+**ถ้า bug เกี่ยวกับ Frontend (UI, rendering, form, state):**
+- Navigate ไปหน้าที่มีปัญหา
+- `mcp__chrome-devtools__take_snapshot` ดู state ปัจจุบัน
+- ทำ action ที่ trigger bug (`click`, `fill`)
+- ตรวจ console: `mcp__chrome-devtools__list_console_messages` (filter `types: ["error", "warn"]`)
+- ตรวจ network: `mcp__chrome-devtools__list_network_requests` (filter `resourceTypes: ["fetch", "xhr"]`)
+- `mcp__chrome-devtools__take_screenshot` บันทึก visual evidence
 
-1. ใช้ `mcp__chrome-devtools__list_pages` เพื่อดูว่ามี browser เปิดอยู่ไหม
-2. ถ้ามี → `mcp__chrome-devtools__select_page` เลือก page ที่เกี่ยวข้อง
-3. Navigate ไปยังหน้าที่มีปัญหา (`mcp__chrome-devtools__navigate_page`)
-4. พยายาม **reproduce bug จริงๆ** บน browser:
-   - ใช้ `mcp__chrome-devtools__take_snapshot` ดู state ปัจจุบันของ UI
-   - ใช้ `mcp__chrome-devtools__click`, `mcp__chrome-devtools__fill` เพื่อทำ action ที่ trigger bug
-   - ตรวจ console errors: `mcp__chrome-devtools__list_console_messages` (filter `types: ["error", "warn"]`)
-   - ตรวจ network requests ที่เกี่ยวข้อง: `mcp__chrome-devtools__list_network_requests`
-5. `mcp__chrome-devtools__take_screenshot` บันทึก visual evidence
-6. **บันทึก findings** ลงใน `{BUGFIX_DIR}/RESEARCH.md` ในส่วน `## Live Reproduction` (append ต่อท้าย)
+**ถ้า bug เกี่ยวกับ Backend (API, database, server logic):**
+- Login ผ่าน browser ถ้ายังไม่ได้ login
+- Navigate/trigger action ที่ reproduce bug
+- `mcp__chrome-devtools__list_network_requests` หา failing request
+- `mcp__chrome-devtools__get_network_request` ดู request body + response body
+- สร้าง curl command จาก request นั้น แล้วรันผ่าน Bash ดู raw response
 
-#### ถ้าเป็น Backend Bug:
+#### C. Update BUG.md:
 
-1. ใช้ `mcp__chrome-devtools__list_pages` เพื่อดูว่ามี browser เปิดอยู่ไหม
-2. ถ้ามี → `mcp__chrome-devtools__select_page` เลือก page ที่เกี่ยวข้อง
-3. **Login ผ่าน browser** (ถ้ายังไม่ได้ login):
-   - Navigate ไปหน้า login ของ app
-   - กรอก credentials และ submit
-   - รอจน login สำเร็จ
-4. **หา network request ที่เกี่ยวกับ bug**:
-   - Navigate ไปหน้าหรือ action ที่ trigger bug
-   - ใช้ `mcp__chrome-devtools__list_network_requests` (filter `resourceTypes: ["fetch", "xhr"]`)
-   - ใช้ `mcp__chrome-devtools__get_network_request` ดู request/response body ของ request ที่เกี่ยวข้อง
-5. **สร้าง curl command** จาก request นั้น (รวม headers, cookies, body)
-6. **รัน curl จริงๆ** ผ่าน Bash tool เพื่อดู response ตรงๆ
-7. **บันทึก findings** ลงใน `{BUGFIX_DIR}/RESEARCH.md` ในส่วน `## Live Reproduction` (append ต่อท้าย)
-
-#### ถ้าไม่สามารถ reproduce ได้ (browser ไม่เปิด, app ไม่ running, etc.):
-
-- ข้ามขั้นตอนนี้ไปเงียบๆ
+หลังจาก investigate เสร็จ ให้ update `{BUGFIX_DIR}/BUG.md` ด้วย:
+- Steps to Reproduce (จากสิ่งที่ทำได้จริง)
+- Expected vs Actual Behavior (จากที่เห็นจริง)
+- Affected Component/Area (ประมาณจาก evidence — frontend/backend/API path)
+- Fix Goal (จาก expected behavior)
 
 ---
 
-### NW-4: เขียน ROOTCAUSE.md
+### NW-3: Research Agent (Background)
 
-หลังจาก root cause ชัดเจนแล้ว เขียน `{BUGFIX_DIR}/ROOTCAUSE.md` ด้วย Write tool:
-```markdown
-# Root Cause: {bug description}
-
-## Confirmed Root Cause
-{ระบุ root cause ให้ชัดเจน 1-2 ประโยค — "เกิดจาก X เพราะ Y"}
-
-## Evidence
-| ที่ | หลักฐาน |
-|-----|---------|
-| [file:line] | {สิ่งที่เจอที่พิสูจน์ root cause} |
-| [log/request] | {error message หรือ response ที่แสดงให้เห็นปัญหา} |
-
-## Data Flow Trace
-{trace จาก entry point ไปถึงจุดที่ fail เช่น:
-  user action → API endpoint → service → [❌ failure point] → error response}
-
-## Why It Happened
-{อธิบายว่าทำไม code ถึงเป็นแบบนี้ — เช่น ลืม handle case นี้, logic ผิด, data ไม่ตรง type}
-```
-
----
-
-### NW-5: เขียน SOLUTION.md โดยตรง
-
-หลังจาก root cause ชัดเจนแล้ว เขียน `{BUGFIX_DIR}/SOLUTION.md` ด้วย Write tool:
-```markdown
-# Fix Solution: {bug description}
-
-## Root Cause (Confirmed)
-{root cause ที่พิสูจน์แล้ว}
-
-## Implementation Steps
-1. {step แรก — file:line ที่ต้องแก้}
-2. {step ต่อไป}
-...
-
-## Files to Change
-| File | Change |
-|------|--------|
-| ... | ... |
-
-## Test Plan
-- [ ] {criteria 1}
-- [ ] {criteria 2}
-```
-
----
-
-### NW-5.5: สร้าง TEST_MANUAL.md
-
-Launch **1 test-manual agent** กับ `run_in_background: true`:
+Launch **bug-research agent** กับ `run_in_background: true`:
 
 | Agent | subagent_type | Prompt Variables |
 |-------|--------------|------------------|
-| Test Planner | `test-manual` | `FEATURE_DESCRIPTION` = bug description, `IMPACT_MD_PATH` = `{BUGFIX_DIR}/ROOTCAUSE.md` (ใช้แทน IMPACT.md — มีรายการไฟล์ที่เกี่ยวข้อง), `SOLUTION_MD_PATH` = `{BUGFIX_DIR}/SOLUTION.md`, `OUTPUT_PATH` = `{BUGFIX_DIR}/TEST_MANUAL.md` |
+| Bug Researcher | `bug-research` | `BUG_DESCRIPTION` = bug description, `BUG_MD_PATH` = `{BUGFIX_DIR}/BUG.md`, `LIVE_EVIDENCE_PATH` = `{BUGFIX_DIR}/RESEARCH.md`, `OUTPUT_PATH` = `{BUGFIX_DIR}/RESEARCH.md` |
+
+ใช้ `TaskOutput` รอจนเสร็จก่อนไป NW-4
+
+---
+
+### NW-4: Rootcause Agent (Background)
+
+Launch **bug-rootcause agent** กับ `run_in_background: true`:
+
+| Agent | subagent_type | Prompt Variables |
+|-------|--------------|------------------|
+| Root Cause Analyst | `bug-rootcause` | `BUG_DESCRIPTION` = bug description, `BUG_MD_PATH` = `{BUGFIX_DIR}/BUG.md`, `RESEARCH_MD_PATH` = `{BUGFIX_DIR}/RESEARCH.md`, `OUTPUT_PATH` = `{BUGFIX_DIR}/ROOTCAUSE.md` |
+
+ใช้ `TaskOutput` รอจนเสร็จก่อนไป NW-5
+
+---
+
+### NW-5: Solution Agent (Background)
+
+Launch **bug-solution agent** กับ `run_in_background: true`:
+
+| Agent | subagent_type | Prompt Variables |
+|-------|--------------|------------------|
+| Fix Designer | `bug-solution` | `BUG_DESCRIPTION` = bug description, `RESEARCH_MD_PATH` = `{BUGFIX_DIR}/RESEARCH.md`, `ROOTCAUSE_MD_PATH` = `{BUGFIX_DIR}/ROOTCAUSE.md`, `OUTPUT_PATH` = `{BUGFIX_DIR}/SOLUTION.md` |
 
 ใช้ `TaskOutput` รอจนเสร็จก่อนไป NW-6
 
 ---
 
-### NW-6: เขียน SUMMARY.md และ Present
+### NW-6: Test Manual Agent (Background)
+
+Launch **test-manual agent** กับ `run_in_background: true`:
+
+| Agent | subagent_type | Prompt Variables |
+|-------|--------------|------------------|
+| Test Planner | `test-manual` | `FEATURE_DESCRIPTION` = bug description, `IMPACT_MD_PATH` = `{BUGFIX_DIR}/ROOTCAUSE.md`, `SOLUTION_MD_PATH` = `{BUGFIX_DIR}/SOLUTION.md`, `OUTPUT_PATH` = `{BUGFIX_DIR}/TEST_MANUAL.md` |
+
+ใช้ `TaskOutput` รอจนเสร็จก่อนไป NW-7
+
+---
+
+### NW-7: เขียน SUMMARY.md และ Present
 
 เขียน `{BUGFIX_DIR}/SUMMARY.md` สรุปสั้นๆ แล้ว present ให้ user:
-- Root cause ที่เจอ
+- Root cause ที่พบ
 - Fix approach
 - Files ที่จะแก้
 - Links ไปทุกไฟล์ (BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md)
 
 ---
 
-### NW-6.5: Launch Learn Agent (ถ้ามี Reference)
-
-**ทำขั้นตอนนี้เฉพาะเมื่อ `REFERENCED_LABEL` ไม่ว่าง** (ตั้งค่าไว้ใน NW-0):
+### NW-7.5: Launch Learn Agent
 
 Launch **1 agent** กับ `run_in_background: true`:
 
@@ -263,62 +222,63 @@ Launch **1 agent** กับ `run_in_background: true`:
 |-------|--------------|------------------|
 | Learn | `learn` | `TASK_DESCRIPTION` = bug description, `CURRENT_DIR` = `{BUGFIX_DIR}`, `REFERENCE_LABEL` = `{REFERENCED_LABEL}`, `REFERENCE_SUMMARY_PATH` = `{REFERENCE_SUMMARY_PATH}` (ว่างได้), `MISTAKE_DIR` = `.nol/mistake/` |
 
-ไม่ต้องรอผล — ดำเนินการต่อไป NW-7 ได้เลย
+ไม่ต้องรอผล — ดำเนินการต่อไป NW-8 ได้เลย
+
+> ถ้า `REFERENCED_LABEL` ว่าง → ส่งค่า `REFERENCE_LABEL` และ `REFERENCE_SUMMARY_PATH` เป็น string ว่าง ("")
 
 ---
 
-### NW-7: Feedback Loop
+### NW-8: Feedback Loop
 
 > "debug เสร็จแล้ว — root cause คือ [X] อยากให้ implement ทันทีหรือปรับ approach ก่อน?"
 >
 > 💡 **ถัดไป:** implement ทันทีได้เลย หรือใช้ `/nol:approve bugfix {number}` ในภายหลัง
 
-**ถ้า user อนุมัติ** → implement ตาม SOLUTION.md ทันที (Phase 4 ของ systematic-debugging) แล้วแจ้ง:
+**ถ้า user อนุมัติ** → implement ตาม SOLUTION.md ทันที แล้วแจ้ง:
 > 💡 **ถัดไป:** `/nol:backlog` — ดู task ที่ยังรอ implement
 
-**ถ้า user มี feedback** → อัปเดต ROOTCAUSE.md / RESEARCH.md / SOLUTION.md แล้ว repeat NW-7
+**ถ้า user มี feedback** → อัปเดต ROOTCAUSE.md / RESEARCH.md / SOLUTION.md แล้ว repeat NW-8
 
 ---
 
 ## Execution Flow
 
 ```
-NW-0 (self):  Read .nol/mistake/*.md + ตรวจ Reference ใน $ARGUMENTS
+NW-0 (self):   Read .nol/mistake/*.md + ตรวจ Reference ใน $ARGUMENTS
        ↓
-NW-1 (self):  Create BUGFIX_DIR + Write BUG.md
+NW-1 (self):   Create BUGFIX_DIR + Write BUG.md
        ↓
-NW-2 (self):  Apply systematic-debugging skill in foreground
-               ├─ Phase 1: Root cause investigation (Docker logs → trace → evidence)
-               ├─ Phase 2: Pattern analysis
-               └─ Phase 3: Hypothesis → test minimally
-               → Write RESEARCH.md as findings are discovered (append continuously)
+NW-2 (self):   Investigate — live evidence เท่านั้น (ห้ามอ่าน source code)
+               ├─ Docker logs
+               ├─ Chrome DevTools: reproduce, console errors, network requests
+               └─ Write RESEARCH.md (live evidence) + Update BUG.md
        ↓
-NW-3 (self):  Live Reproduction via Chrome DevTools
-               → append findings to RESEARCH.md
+NW-3 (background, wait):  bug-research agent → ขุด codebase → RESEARCH.md (full)
        ↓
-NW-4 (self):  Write ROOTCAUSE.md (after root cause confirmed)
+NW-4 (background, wait):  bug-rootcause agent → ROOTCAUSE.md
        ↓
-NW-5 (self):  Write SOLUTION.md
+NW-5 (background, wait):  bug-solution agent → SOLUTION.md
        ↓
-NW-5.5 (1 background):  test-manual agent → TEST_MANUAL.md
-       ↓ wait
-NW-6 (self):  Write SUMMARY.md → Present to user
+NW-6 (background, wait):  test-manual agent → TEST_MANUAL.md
        ↓
-NW-6.5 (1 background, ถ้า Reference):  learn agent → .nol/mistake/YYYY-MM-DD.md
-       ↓ (ไม่รอ)
-NW-7:  Feedback loop
-        ├─ Approved → Implement immediately (Phase 4 of systematic-debugging)
-        └─ Changes  → Update ROOTCAUSE.md / RESEARCH.md / SOLUTION.md / TEST_MANUAL.md → Repeat NW-7
+NW-7 (self):   Write SUMMARY.md → Present to user
+       ↓
+NW-7.5 (background, no wait):  learn agent → .nol/mistake/YYYY-MM-DD.md
+       ↓
+NW-8:  Feedback loop
+        ├─ Approved → Implement immediately
+        └─ Changes  → Update files → Repeat NW-8
 ```
 
-**Total agents: 1–2** — test-manual agent (background, NW-5.5) + learn agent (background, NW-6.5 — เฉพาะเมื่อมี Reference)
+**Total agents: 4** — bug-research (NW-3) + bug-rootcause (NW-4) + bug-solution (NW-5) + test-manual (NW-6) — all background sequential + learn (NW-7.5, background no-wait)
 
 ---
 
 ## Important
 
+- **DO NOT read source code files** during NW-2 Investigate — that's the research agent's job.
 - **DO NOT implement** the fix until user explicitly approves.
-- อ่าน Docker logs ก่อนเสมอ per AGENTS.md — ห้ามแก้โค้ดก่อนตรวจ logs
+- อ่าน Docker logs ก่อนเสมอ per AGENTS.md — ก่อนแก้โค้ดใดๆ
 - Write in the same language the user used in the description.
 
 ---
