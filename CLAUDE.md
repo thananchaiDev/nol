@@ -51,7 +51,7 @@ agents/       — sub-agents launched by commands (internal)
 6 agents: reads mistakes + detects reference + reads knowledge (or launches knowledge bg) → Context → Research (sequential, wait) → Solution + Impact + Test-Manual (3 parallel) → writes SUMMARY.md → Learn (background, always) → calls `recap`
 
 ### `/nol:bugfix` (investigate foreground + 4 background agents sequential)
-reads mistakes + detects reference + reads knowledge (or launches knowledge bg) → Self: BUG.md → Investigate live evidence (logs, DevTools, no code reading) → RESEARCH.md (live) → bug-research (bg, wait) → RESEARCH.md (full) → bug-rootcause (bg, wait) → ROOTCAUSE.md → bug-solution (bg, wait) → SOLUTION.md → test-manual (bg, wait) → TEST_MANUAL.md → SUMMARY.md → Learn (background, always) → NW-8 feedback loop
+reads mistakes + detects reference + reads knowledge (or launches knowledge bg) → Self: BUG.md → Investigate live evidence (logs, DevTools, no code reading) → RESEARCH.md (live) + REPRODUCE.md → bug-research (bg, wait) → RESEARCH.md (full) → bug-rootcause (bg, wait) → ROOTCAUSE.md → bug-solution (bg, wait) → SOLUTION.md → test-manual (bg, wait) → TEST_MANUAL.md → SUMMARY.md → Learn (background, always) → NW-8 feedback loop
 
 ### `/nol:recap`
 Reads plan files + checks actual codebase to verify implementation status → feedback loop → recommends `approve`
@@ -69,7 +69,7 @@ Marks a feature/bugfix/quick item as Implemented when it was implemented outside
 
 All planning output is written to the **target project's** `.nol/` directory:
 - `.nol/feature/{n}-{name}/` — FEATURE.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
-- `.nol/bugfix/{n}-{name}/` — BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
+- `.nol/bugfix/{n}-{name}/` — BUG.md, REPRODUCE.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/quick/{n}-{name}/` — REQUIREMENT.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/mistake/{YYYY-MM-DD}.md` — lesson learned เมื่อ nol pipeline พลาด (เขียนโดย `learn` agent)
 - `.nol/knowledge.md` — project context (type, stack, purpose) สร้างครั้งแรกและใช้ซ้ำ (เขียนโดย `knowledge` agent)

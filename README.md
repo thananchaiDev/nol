@@ -64,7 +64,7 @@ NW-0 (self):              Read .nol/mistake/* + detect reference
 NW-1 (self):              Create BUG.md
           ↓
 NW-2 (self):              Investigate — live evidence only (logs, DevTools, no code reading)
-                          → Write RESEARCH.md (live evidence)
+                          → Write RESEARCH.md (live evidence) + REPRODUCE.md
           ↓
 NW-3 (background, wait):  bug-research agent → RESEARCH.md (full, with code findings)
           ↓
@@ -97,6 +97,7 @@ All files are written to the **target project's** `.nol/` directory:
 │
 ├── bugfix/{n}-{name}/
 │   ├── BUG.md
+│   ├── REPRODUCE.md
 │   ├── RESEARCH.md
 │   ├── ROOTCAUSE.md
 │   ├── SOLUTION.md
@@ -161,7 +162,7 @@ claude plugin install nol
 
 ## Version
 
-Current version: **1.1.9** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
+Current version: **1.1.10** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
 
 ## File Structure
 

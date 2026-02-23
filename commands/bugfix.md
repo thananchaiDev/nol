@@ -162,6 +162,35 @@ Investigate bug จากของจริง (logs, browser, network) ใน f
 - Affected Component/Area (ประมาณจาก evidence — frontend/backend/API path)
 - Fix Goal (จาก expected behavior)
 
+#### D. Write REPRODUCE.md:
+
+หลังจาก investigate เสร็จ ให้เขียน `{BUGFIX_DIR}/REPRODUCE.md` ด้วย Write tool:
+
+```markdown
+# Reproduction Steps: {bug description}
+
+## Environment
+- URL / Page: {หน้าที่เกิด bug}
+- User role / State: {ถ้าต้อง login หรือมีเงื่อนไขก่อน}
+
+## Prerequisites
+{สิ่งที่ต้องทำก่อน เช่น login, มีข้อมูลใน DB, etc.}
+
+## Steps to Reproduce
+1. {step 1}
+2. {step 2}
+3. ...
+
+## Expected Result
+{ผลที่ควรได้}
+
+## Actual Result
+{ผลที่ได้จริง — พร้อม error message หรือ screenshot path ถ้ามี}
+
+## Additional Context
+{Docker logs snippet, request/response body, หรือ evidence อื่นๆ ที่เกี่ยวข้อง}
+```
+
 ---
 
 ### NW-3: Research Agent (Background)
@@ -258,7 +287,8 @@ NW-1 (self):   Create BUGFIX_DIR + Write BUG.md
 NW-2 (self):   Investigate — live evidence เท่านั้น (ห้ามอ่าน source code)
                ├─ Docker logs
                ├─ Chrome DevTools: reproduce, console errors, network requests
-               └─ Write RESEARCH.md (live evidence) + Update BUG.md
+               ├─ Write RESEARCH.md (live evidence) + Update BUG.md
+               └─ Write REPRODUCE.md (step-by-step reproduction guide)
        ↓
 NW-3 (background, wait):  bug-research agent → ขุด codebase → RESEARCH.md (full)
        ↓
