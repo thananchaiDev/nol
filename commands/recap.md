@@ -1,3 +1,7 @@
+---
+description: "สรุป progress ของ feature หรือ bugfix"
+---
+
 # Recap - สรุปสิ่งที่ทำใน Feature หรือ Bugfix
 
 ตรวจสอบ progress จาก **codebase จริงเสมอ** — ห้ามใช้ SUMMARY.md เป็นแหล่งข้อมูลสถานะ implementation
@@ -5,13 +9,13 @@
 ## Usage
 
 ```
-/recap feature <number>          เช่น /recap feature 1
-/recap feature <name>            เช่น /recap feature hscode
-/recap bugfix <number>           เช่น /recap bugfix 2
-/recap bugfix <name>             เช่น /recap bugfix sender-data
-/recap feature                   (แสดงรายการทั้งหมด)
-/recap bugfix                    (แสดงรายการทั้งหมด)
-/recap                           (แสดงรายการทั้งหมดทั้ง feature และ bugfix)
+/nol:recap feature <number>          เช่น /nol:recap feature 1
+/nol:recap feature <name>            เช่น /nol:recap feature hscode
+/nol:recap bugfix <number>           เช่น /nol:recap bugfix 2
+/nol:recap bugfix <name>             เช่น /nol:recap bugfix sender-data
+/nol:recap feature                   (แสดงรายการทั้งหมด)
+/nol:recap bugfix                    (แสดงรายการทั้งหมด)
+/nol:recap                           (แสดงรายการทั้งหมดทั้ง feature และ bugfix)
 ```
 
 ## AGENTS.md Compliance
@@ -87,7 +91,7 @@ Parse `$ARGUMENTS` เพื่อระบุ type และ query:
    | `ddl/intercourier/006_add_sort_sys_hscode.sql` | 🆕 Not created | ไฟล์ยังไม่ถูกสร้าง |
 
    ### ไฟล์ Plan
-   - FEATURE.md / BUG.md · RESEARCH.md · IMPACT.md · SOLUTION.md · VERIFY.md
+   - FEATURE.md / BUG.md · RESEARCH.md · IMPACT.md · SOLUTION.md · TEST_MANUAL.md
    ```
 
 6. **Feedback Loop — ถามทันทีหลัง present และวนไม่มีที่สิ้นสุดจนกว่า user จะบอกว่าไม่มี feedback แล้ว:**
@@ -104,15 +108,15 @@ Parse `$ARGUMENTS` เพื่อระบุ type และ query:
       - Root cause / findings → แก้ `RESEARCH.md`
       - Impact / risk → แก้ `IMPACT.md`
       - วิธี fix / approach → แก้ `SOLUTION.md`
-      - Test plan → แก้ `VERIFY.md`
-   2. **แก้ไขทุกไฟล์ที่มีข้อมูลที่ต้องเปลี่ยน** — ไม่ใช่แค่ไฟล์หลัก ให้ grep หา reference ที่เกี่ยวข้องในทุกไฟล์ใน feature directory แล้วแก้ให้ครบ (เช่น ถ้าเปลี่ยน filename ต้องแก้ทุกไฟล์ที่อ้างถึง filename นั้น ทั้ง SOLUTION.md, IMPACT.md, VERIFY.md, SUMMARY.md)
+      - Test plan → แก้ `TEST_MANUAL.md`
+   2. **แก้ไขทุกไฟล์ที่มีข้อมูลที่ต้องเปลี่ยน** — ไม่ใช่แค่ไฟล์หลัก ให้ grep หา reference ที่เกี่ยวข้องในทุกไฟล์ใน feature directory แล้วแก้ให้ครบ (เช่น ถ้าเปลี่ยน filename ต้องแก้ทุกไฟล์ที่อ้างถึง filename นั้น ทั้ง SOLUTION.md, IMPACT.md, TEST_MANUAL.md, SUMMARY.md)
    3. **แสดง "สิ่งที่แก้เพิ่มจาก feedback"** ก่อน present recap ใหม่:
       ```
       ### ✏️ สิ่งที่แก้เพิ่มจาก Feedback
       - [ไฟล์ที่แก้]: [สิ่งที่เปลี่ยนแปลง เช่น "เพิ่ม step การ rollback ใน SOLUTION.md"]
       - [ไฟล์ที่แก้]: [สิ่งที่เปลี่ยนแปลง]
       ```
-   4. Launch `feature-summary` agent (background) เพื่อ regenerate summary จาก 5 ไฟล์ที่อัปเดต → รอผล
+   4. Launch `summary` agent (background) เพื่อ regenerate summary จาก 5 ไฟล์ที่อัปเดต → รอผล
    5. Overwrite `{FOUND_DIR}/SUMMARY.md` ด้วย summary ใหม่ (รวม Implementation Status ล่าสุด)
    6. Present recap ใหม่ทั้งหมด (ตามรูปแบบ Step 5) → **วนกลับ Step 6** ทันที
 
@@ -122,7 +126,7 @@ Parse `$ARGUMENTS` เพื่อระบุ type และ query:
 
    **ถ้า user บอกว่าไม่มี feedback แล้ว หรืออยากจะ implement:**
    - ห้าม implement เอง
-   - แจ้งว่า: "ถ้าพร้อม implement แล้วใช้คำสั่ง `/approve [type] [number]` ได้เลยครับ เช่น `/approve bugfix 1`"
+   - แจ้งว่า: "ถ้าพร้อม implement แล้วใช้คำสั่ง `/nol:approve [type] [number]` ได้เลยครับ เช่น `/nol:approve bugfix 1`"
    - จบ loop
 
 ---

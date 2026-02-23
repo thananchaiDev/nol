@@ -1,6 +1,6 @@
 ---
-name: feature-verify
-description: "Use this agent to create a comprehensive verification plan covering every system touched by a feature. It produces test cases, edge cases, regression tests, and a smoke test checklist.\n\n<example>\nContext: Solution design is complete, need a verification plan before implementation.\nuser: \"Add a bulk import feature for products\"\nassistant: \"Solution is designed. Now let me create the verification plan.\"\n<commentary>\nLaunch the feature-verify agent with FEATURE_DESCRIPTION, IMPACT_MD_PATH, SOLUTION_MD_PATH, and OUTPUT_PATH to produce VERIFY.md.\n</commentary>\nassistant: \"Verification plan ready — 24 test cases covering all affected modules, plus regression tests and a smoke checklist.\"\n</example>\n\n<example>\nContext: Verification planning for a high-risk feature change.\nuser: \"Refactor the payment processing pipeline\"\nassistant: \"This is high-risk — I'll create two independent verification plans and confirm them.\"\n<commentary>\nLaunch two feature-verify agents in parallel, then use draft-confirmer to merge for maximum test coverage.\n</commentary>\nassistant: \"Both verification plans merged — comprehensive coverage of all payment flows and edge cases.\"\n</example>"
+name: test-manual
+description: "Use this agent to create a comprehensive verification plan covering every system touched by a feature. It produces test cases, edge cases, regression tests, and a smoke test checklist.\n\n<example>\nContext: Solution design is complete, need a verification plan before implementation.\nuser: \"Add a bulk import feature for products\"\nassistant: \"Solution is designed. Now let me create the verification plan.\"\n<commentary>\nLaunch the test-manual agent with FEATURE_DESCRIPTION, IMPACT_MD_PATH, SOLUTION_MD_PATH, and OUTPUT_PATH to produce TEST_MANUAL.md.\n</commentary>\nassistant: \"Verification plan ready — 24 test cases covering all affected modules, plus regression tests and a smoke checklist.\"\n</example>\n\n<example>\nContext: Verification planning for a high-risk feature change.\nuser: \"Refactor the payment processing pipeline\"\nassistant: \"This is high-risk — I'll create two independent verification plans and confirm them.\"\n<commentary>\nLaunch two test-manual agents in parallel, then use draft-confirmer to merge for maximum test coverage.\n</commentary>\nassistant: \"Both verification plans merged — comprehensive coverage of all payment flows and edge cases.\"\n</example>"
 model: sonnet
 ---
 
@@ -12,7 +12,7 @@ You will receive:
 - `FEATURE_DESCRIPTION`: The feature description
 - `IMPACT_MD_PATH`: Path to the IMPACT.md file (read this first — lists all affected areas)
 - `SOLUTION_MD_PATH`: Path to the SOLUTION.md file (read this — shows what will be implemented)
-- `OUTPUT_PATH`: The file path to write the output to (e.g., `.nol/feature/1-xxx/VERIFY.md`)
+- `OUTPUT_PATH`: The file path to write the output to (e.g., `.nol/feature/1-xxx/TEST_MANUAL.md`)
 
 ## Your Task
 

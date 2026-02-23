@@ -1,3 +1,7 @@
+---
+description: "วิเคราะห์ debug และวางแผนแก้ bug"
+---
+
 # Bugfix - Analyze & Plan a Bug Fix
 
 Debug ทันทีใน foreground ใช้ systematic-debugging skill — ไม่ใช้ background agents
@@ -5,15 +9,15 @@ Debug ทันทีใน foreground ใช้ systematic-debugging skill — 
 ## Usage
 
 ```
-/bugfix [description of the bug]
+/nol:bugfix [description of the bug]
 ```
 
 **ตัวอย่าง:**
 ```
-/bugfix ปุ่ม reset ไม่ล้างรูป
-/bugfix login error on mobile
-/bugfix ตรงนี้ยังไม่ผ่าน
-/bugfix feature 1 ปุ่ม submit ไม่ทำงานใน step 3
+/nol:bugfix ปุ่ม reset ไม่ล้างรูป
+/nol:bugfix login error on mobile
+/nol:bugfix ตรงนี้ยังไม่ผ่าน
+/nol:bugfix feature 1 ปุ่ม submit ไม่ทำงานใน step 3
 ```
 
 ## AGENTS.md Compliance
@@ -157,7 +161,32 @@ Use Skill tool: systematic-debugging
 
 ---
 
-### NW-4: เขียน SOLUTION.md โดยตรง
+### NW-4: เขียน ROOTCAUSE.md
+
+หลังจาก root cause ชัดเจนแล้ว เขียน `{BUGFIX_DIR}/ROOTCAUSE.md` ด้วย Write tool:
+```markdown
+# Root Cause: {bug description}
+
+## Confirmed Root Cause
+{ระบุ root cause ให้ชัดเจน 1-2 ประโยค — "เกิดจาก X เพราะ Y"}
+
+## Evidence
+| ที่ | หลักฐาน |
+|-----|---------|
+| [file:line] | {สิ่งที่เจอที่พิสูจน์ root cause} |
+| [log/request] | {error message หรือ response ที่แสดงให้เห็นปัญหา} |
+
+## Data Flow Trace
+{trace จาก entry point ไปถึงจุดที่ fail เช่น:
+  user action → API endpoint → service → [❌ failure point] → error response}
+
+## Why It Happened
+{อธิบายว่าทำไม code ถึงเป็นแบบนี้ — เช่น ลืม handle case นี้, logic ผิด, data ไม่ตรง type}
+```
+
+---
+
+### NW-5: เขียน SOLUTION.md โดยตรง
 
 หลังจาก root cause ชัดเจนแล้ว เขียน `{BUGFIX_DIR}/SOLUTION.md` ด้วย Write tool:
 ```markdown
@@ -183,23 +212,23 @@ Use Skill tool: systematic-debugging
 
 ---
 
-### NW-5: เขียน SUMMARY.md และ Present
+### NW-6: เขียน SUMMARY.md และ Present
 
 เขียน `{BUGFIX_DIR}/SUMMARY.md` สรุปสั้นๆ แล้ว present ให้ user:
 - Root cause ที่เจอ
 - Fix approach
 - Files ที่จะแก้
-- Links ไปทุกไฟล์ (BUG.md, RESEARCH.md, SOLUTION.md)
+- Links ไปทุกไฟล์ (BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md)
 
 ---
 
-### NW-6: Feedback Loop
+### NW-7: Feedback Loop
 
 > "debug เสร็จแล้ว — root cause คือ [X] อยากให้ implement ทันทีหรือปรับ approach ก่อน?"
 
 **ถ้า user อนุมัติ** → implement ตาม SOLUTION.md ทันที (Phase 4 ของ systematic-debugging)
 
-**ถ้า user มี feedback** → อัปเดต RESEARCH.md / SOLUTION.md แล้ว repeat NW-6
+**ถ้า user มี feedback** → อัปเดต ROOTCAUSE.md / RESEARCH.md / SOLUTION.md แล้ว repeat NW-7
 
 ---
 
@@ -217,13 +246,15 @@ NW-2 (self):  Apply systematic-debugging skill in foreground
 NW-3 (self):  Live Reproduction via Chrome DevTools
                → append findings to RESEARCH.md
        ↓
-NW-4 (self):  Write SOLUTION.md directly (after root cause confirmed)
+NW-4 (self):  Write ROOTCAUSE.md (after root cause confirmed)
        ↓
-NW-5 (self):  Write SUMMARY.md → Present to user
+NW-5 (self):  Write SOLUTION.md
        ↓
-NW-6:  Feedback loop
+NW-6 (self):  Write SUMMARY.md → Present to user
+       ↓
+NW-7:  Feedback loop
         ├─ Approved → Implement immediately (Phase 4 of systematic-debugging)
-        └─ Changes  → Update RESEARCH.md / SOLUTION.md → Repeat NW-6
+        └─ Changes  → Update ROOTCAUSE.md / RESEARCH.md / SOLUTION.md → Repeat NW-7
 ```
 
 **Total agents: 0** — ทำทุกอย่างใน foreground ไม่มี background sub-agents

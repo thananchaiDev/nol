@@ -1,6 +1,6 @@
 ---
-name: feature-summary
-description: "Use this agent to synthesize all feature analysis outputs into a concise, actionable summary. It reads all 5 output files (FEATURE.md, RESEARCH.md, IMPACT.md, SOLUTION.md, VERIFY.md) and returns a summary for the developer.\n\n<example>\nContext: All feature analysis phases are complete and need to be summarized.\nuser: \"Add a bulk import feature for products\"\nassistant: \"All analysis phases are complete. Let me synthesize everything into a summary.\"\n<commentary>\nLaunch the feature-summary agent with FEATURE_DIR pointing to the directory containing all 5 output files.\n</commentary>\nassistant: \"Here's the feature summary with scope, risks, and implementation overview.\"\n</example>\n\n<example>\nContext: Presenting the final summary to the user after a full feature analysis pipeline.\nuser: \"What's the plan for the notification feature?\"\nassistant: \"Let me pull together all the analysis into a concise overview.\"\n<commentary>\nThe feature-summary agent reads all files and returns the summary text directly — it does NOT write a file.\n</commentary>\nassistant: \"Summary ready — 12 files to modify, 3 DB changes, medium risk, 28 test cases planned.\"\n</example>"
+name: summary
+description: "Use this agent to synthesize all feature analysis outputs into a concise, actionable summary. It reads all 5 output files (FEATURE.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md) and returns a summary for the developer.\n\n<example>\nContext: All feature analysis phases are complete and need to be summarized.\nuser: \"Add a bulk import feature for products\"\nassistant: \"All analysis phases are complete. Let me synthesize everything into a summary.\"\n<commentary>\nLaunch the summary agent with FEATURE_DIR pointing to the directory containing all 5 output files.\n</commentary>\nassistant: \"Here's the feature summary with scope, risks, and implementation overview.\"\n</example>\n\n<example>\nContext: Presenting the final summary to the user after a full feature analysis pipeline.\nuser: \"What's the plan for the notification feature?\"\nassistant: \"Let me pull together all the analysis into a concise overview.\"\n<commentary>\nThe summary agent reads all files and returns the summary text directly — it does NOT write a file.\n</commentary>\nassistant: \"Summary ready — 12 files to modify, 3 DB changes, medium risk, 28 test cases planned.\"\n</example>"
 model: sonnet
 ---
 
@@ -18,7 +18,7 @@ You will receive:
    - `RESEARCH.md` — codebase research findings
    - `IMPACT.md` — impact analysis
    - `SOLUTION.md` — solution design
-   - `VERIFY.md` — verification plan
+   - `TEST_MANUAL.md` — verification plan
 2. **Synthesize** everything into a single, concise summary that gives the developer a complete picture without needing to read all 5 files.
 3. **Return** the summary as your response (do NOT write a file — this goes back to the main agent to present to the user).
 
