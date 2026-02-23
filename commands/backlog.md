@@ -63,10 +63,51 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 
 **🔄 Planning in Progress (plan ยังไม่สมบูรณ์)**
 - ไม่มี `SUMMARY.md` แต่มีอย่างน้อย `FEATURE.md`, `BUG.md` หรือ `REQUIREMENT.md`
-- ตรวจ git log เพิ่มเติม: รัน `git log --oneline -30` แล้ว match keyword จากชื่อ directory กับ commit messages — ถ้าเจอ commit ที่น่าจะเกี่ยวข้อง ให้แสดง `⚠️ อาจถูก commit แล้ว` พร้อม commit hash ใน Preview column
 
 **⚠️ Incomplete (ข้อมูลไม่พอ)**
 - directory ว่างเปล่า หรือไม่มีไฟล์ที่คาดหวัง
+
+---
+
+### Step 2.5: Auto-mark Planning items ที่ถูก commit แล้ว
+
+**ทำทันทีหลัง Step 2 ก่อนแสดงผล** — ถ้ามี item ที่สถานะ 🔄 Planning ให้:
+
+1. รัน `git log --oneline -30` ครั้งเดียว
+2. สำหรับแต่ละ 🔄 Planning item:
+   - ดึง keywords จากชื่อ directory โดยตัดส่วนที่ไม่มีความหมายออก (ตัวเลข, `-`, `quick`, `bugfix`, `feature`, `nol`)
+   - Match keywords กับ commit messages (case-insensitive)
+   - ถ้าเจอ commit ที่ match **อย่างน้อย 1 รายการ** → ดำเนินการ auto-done ทันที:
+     a. อ่านไฟล์หลักของ item (BUG.md / FEATURE.md / REQUIREMENT.md)
+     b. สร้างหรือ append SUMMARY.md ใน `{TARGET_DIR}` ด้วยเนื้อหา:
+        ```markdown
+        # Summary: {ชื่อ directory}
+
+        > {description 1-2 บรรทัดแรกจากไฟล์หลัก — ถ้ามี SUMMARY.md อยู่แล้วให้ append แทน}
+
+        ---
+
+        ## Implementation Report
+
+        **Date:** {วันที่ปัจจุบัน}
+        **Status:** ✅ Completed (auto-detected via git log by `/nol:backlog`)
+        **Note:** Implemented outside nol pipeline — marked done automatically
+
+        ### Related Commits
+        | Commit | Message |
+        |--------|---------|
+        | {hash} | {message} |
+
+        ### Files Changed
+        _(ไม่ทราบ — implement นอก pipeline; ตรวจจาก git diff ของ commit ข้างต้น)_
+
+        ### Test Results
+        _(ไม่ทราบ — implement นอก pipeline; ควร verify ด้วยตนเองก่อน deploy)_
+        ```
+     c. แจ้งทันทีว่า: `✅ Auto-marked as done: {ชื่อ directory} (พบ commit ที่ match)`
+3. หลังประมวลผลทุก item แล้ว → **re-scan ทุก directory ใหม่ทั้งหมด** แล้วจำแนกสถานะใหม่อีกครั้ง
+
+ถ้าไม่มี Planning item เลย หรือไม่มี item ที่ commit match → ข้าม Step นี้เงียบๆ
 
 ---
 
