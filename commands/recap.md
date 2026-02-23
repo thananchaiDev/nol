@@ -97,6 +97,8 @@ Parse `$ARGUMENTS` เพื่อระบุ type และ query:
 
    ### ไฟล์ Plan
    - REQUIREMENT.md · RESEARCH.md · IMPACT.md · SOLUTION.md · TEST_MANUAL.md
+
+   💡 **ถัดไป:** `/nol:approve [type] [number]` — เช่น `/nol:approve quick 1`
    ```
 
 6. **Feedback Loop — ถามทันทีหลัง present และวนไม่มีที่สิ้นสุดจนกว่า user จะบอกว่าไม่มี feedback แล้ว:**

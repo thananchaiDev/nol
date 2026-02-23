@@ -225,8 +225,11 @@ Use Skill tool: systematic-debugging
 ### NW-7: Feedback Loop
 
 > "debug เสร็จแล้ว — root cause คือ [X] อยากให้ implement ทันทีหรือปรับ approach ก่อน?"
+>
+> 💡 **ถัดไป:** implement ทันทีได้เลย หรือใช้ `/nol:approve bugfix {number}` ในภายหลัง
 
-**ถ้า user อนุมัติ** → implement ตาม SOLUTION.md ทันที (Phase 4 ของ systematic-debugging)
+**ถ้า user อนุมัติ** → implement ตาม SOLUTION.md ทันที (Phase 4 ของ systematic-debugging) แล้วแจ้ง:
+> 💡 **ถัดไป:** `/nol:backlog` — ดู task ที่ยังรอ implement
 
 **ถ้า user มี feedback** → อัปเดต ROOTCAUSE.md / RESEARCH.md / SOLUTION.md แล้ว repeat NW-7
 
