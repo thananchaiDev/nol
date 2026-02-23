@@ -23,6 +23,14 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 - `bugfix` → สแกนเฉพาะ `.nol/bugfix/`
 - `quick` → สแกนเฉพาะ `.nol/quick/`
 
+### Step 0: อ่าน Mistake Files
+
+ก่อนเริ่มทำงาน:
+
+1. ใช้ Glob tool หา `.nol/mistake/*.md`
+2. ถ้ามี → Read ทุกไฟล์ และนำมาเป็น context เพื่อ avoid ข้อผิดพลาดซ้ำ
+3. ถ้าไม่มี → ข้ามไปเงียบๆ
+
 ---
 
 ### Step 1: สแกน directories

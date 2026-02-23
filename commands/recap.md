@@ -37,6 +37,14 @@ Parse `$ARGUMENTS` เพื่อระบุ type และ query:
 - Format: `feature <query>`, `bugfix <query>`, `quick <query>`, หรือพิมพ์แค่ type เดียว/ไม่พิมพ์อะไรเลย
 - `<query>` อาจเป็นตัวเลข (เช่น `1`), ชื่อเต็ม (เช่น `add-hscode-sorting`), หรือคำบางส่วน (เช่น `hscode`, `login`)
 
+### Step 0: อ่าน Mistake Files
+
+ก่อนเริ่มทำงาน:
+
+1. ใช้ Glob tool หา `.nol/mistake/*.md`
+2. ถ้ามี → Read ทุกไฟล์ และนำมาเป็น context เพื่อ avoid ข้อผิดพลาดซ้ำ
+3. ถ้าไม่มี → ข้ามไปเงียบๆ
+
 ---
 
 ### Case 1: ระบุ type และ query (เช่น `/recap feature 1`, `/recap quick 2`)

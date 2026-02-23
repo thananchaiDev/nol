@@ -36,6 +36,25 @@ Debug ทันทีใน foreground ใช้ systematic-debugging skill — 
 
 ---
 
+### NW-0: อ่าน Mistake Files และตรวจ Reference
+
+**A. อ่าน Mistake Files:**
+
+1. ใช้ Glob tool หา `.nol/mistake/*.md`
+2. ถ้ามี → Read ทุกไฟล์ และนำมาเป็น context เพื่อ avoid ข้อผิดพลาดซ้ำ
+3. ถ้าไม่มี → ข้ามไปเงียบๆ
+
+**B. ตรวจ Reference ถึงงานเดิม:**
+
+ตรวจ `$ARGUMENTS` ว่ามีการอ้างถึงงานเดิมหรือไม่ โดยหาคีย์เวิร์ด เช่น `feature 1`, `feature add-hscode`, `quick 2`, `bugfix 3`:
+
+- ถ้ามี reference → ตั้งค่า `REFERENCED_LABEL` = type + identifier เช่น `"feature 1"`
+  - ค้นหา directory ที่ match ใน `.nol/{type}/` (เช่น `.nol/feature/1-*/`)
+  - ตั้งค่า `REFERENCE_SUMMARY_PATH` = path ของ SUMMARY.md ที่เจอ (ถ้ามี)
+- ถ้าไม่มี reference → ตั้งค่า `REFERENCED_LABEL` = `""` (ว่าง)
+
+---
+
 ### NW-1: สร้าง Directory และ BUG.md
 
 1. นับ bugfix ที่มีอยู่แล้วใน `.nol/bugfix/` เพื่อหาเลขถัดไป
@@ -234,6 +253,20 @@ Launch **1 test-manual agent** กับ `run_in_background: true`:
 
 ---
 
+### NW-6.5: Launch Learn Agent (ถ้ามี Reference)
+
+**ทำขั้นตอนนี้เฉพาะเมื่อ `REFERENCED_LABEL` ไม่ว่าง** (ตั้งค่าไว้ใน NW-0):
+
+Launch **1 agent** กับ `run_in_background: true`:
+
+| Agent | subagent_type | Prompt Variables |
+|-------|--------------|------------------|
+| Learn | `learn` | `TASK_DESCRIPTION` = bug description, `CURRENT_DIR` = `{BUGFIX_DIR}`, `REFERENCE_LABEL` = `{REFERENCED_LABEL}`, `REFERENCE_SUMMARY_PATH` = `{REFERENCE_SUMMARY_PATH}` (ว่างได้), `MISTAKE_DIR` = `.nol/mistake/` |
+
+ไม่ต้องรอผล — ดำเนินการต่อไป NW-7 ได้เลย
+
+---
+
 ### NW-7: Feedback Loop
 
 > "debug เสร็จแล้ว — root cause คือ [X] อยากให้ implement ทันทีหรือปรับ approach ก่อน?"
@@ -250,6 +283,8 @@ Launch **1 test-manual agent** กับ `run_in_background: true`:
 ## Execution Flow
 
 ```
+NW-0 (self):  Read .nol/mistake/*.md + ตรวจ Reference ใน $ARGUMENTS
+       ↓
 NW-1 (self):  Create BUGFIX_DIR + Write BUG.md
        ↓
 NW-2 (self):  Apply systematic-debugging skill in foreground
@@ -269,12 +304,14 @@ NW-5.5 (1 background):  test-manual agent → TEST_MANUAL.md
        ↓ wait
 NW-6 (self):  Write SUMMARY.md → Present to user
        ↓
+NW-6.5 (1 background, ถ้า Reference):  learn agent → .nol/mistake/YYYY-MM-DD.md
+       ↓ (ไม่รอ)
 NW-7:  Feedback loop
         ├─ Approved → Implement immediately (Phase 4 of systematic-debugging)
         └─ Changes  → Update ROOTCAUSE.md / RESEARCH.md / SOLUTION.md / TEST_MANUAL.md → Repeat NW-7
 ```
 
-**Total agents: 1** — test-manual agent (background, NW-5.5)
+**Total agents: 1–2** — test-manual agent (background, NW-5.5) + learn agent (background, NW-6.5 — เฉพาะเมื่อมี Reference)
 
 ---
 

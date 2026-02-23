@@ -28,6 +28,14 @@ Create a structured feature folder using specialized sub-agents with dual-draft 
 
 Parse `$ARGUMENTS` as the feature description.
 
+### Step 0: อ่าน Mistake Files
+
+ก่อนเริ่มทำงาน:
+
+1. ใช้ Glob tool หา `.nol/mistake/*.md`
+2. ถ้ามี → Read ทุกไฟล์ และนำมาเป็น context เพื่อ avoid ข้อผิดพลาดซ้ำ
+3. ถ้าไม่มี → ข้ามไปเงียบๆ
+
 ### Step 1: Determine Feature Number & Name
 
 1. Check existing directories under `.nol/feature/` to find the next available number.

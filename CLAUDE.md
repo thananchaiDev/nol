@@ -4,19 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-**nol** is a Claude Code plugin that provides a structured feature development workflow via slash commands and sub-agents. It is installed as a plugin into other projects and adds commands like `/nol:feature`, `/nol:quick`, `/nol:bugfix`, `/nol:recap`, `/nol:approve`, and `/nol:backlog`.
+**nol** is a Claude Code plugin that provides a structured feature development workflow via slash commands and sub-agents. It is installed as a plugin into other projects and adds commands like `/nol:feature`, `/nol:quick`, `/nol:bugfix`, `/nol:recap`, `/nol:approve`, `/nol:backlog`. It also has an internal `learn` agent for recording lessons learned.
+
+## When Adding New Features to nol
+
+เมื่อเพิ่ม command ใหม่, agent ใหม่, หรือเปลี่ยน pipeline — ต้องอัปเดตไฟล์เหล่านี้ให้ครบ:
+
+1. **`CLAUDE.md`** (ไฟล์นี้) — อัปเดต File Structure, Pipeline descriptions, Output Location
+2. **`README.md`** — อัปเดต Commands table, Pipelines diagrams, Output Structure, File Structure
+3. **Version** (3 ไฟล์ต้องตรงกันเสมอ) — bump version ทุกครั้งที่มีการเปลี่ยนแปลง
 
 ## Versioning
 
-Version is stored in **two files** — both must be updated together:
+Version is stored in **three files** — all must be updated together:
 - `.claude-plugin/plugin.json` → `"version"` field
 - `.claude-plugin/marketplace.json` → `"version"` field inside the `plugins[0]` object
+- `README.md` → `Current version: **x.x.x**` line in the `## Version` section
 
 ## File Structure
 
 ```
 commands/     — slash commands invoked by the user (/nol:<name>)
 agents/       — sub-agents launched by commands (internal)
+  learn.md        — records nol pipeline mistakes as lesson learned
 .claude-plugin/
   plugin.json       — plugin metadata + version
   marketplace.json  — marketplace listing + version
@@ -34,10 +44,10 @@ agents/       — sub-agents launched by commands (internal)
 7 agents: Context + 2× Research (parallel) → Confirm-Research → Impact + Solution (parallel) → Test-Manual → writes SUMMARY.md → calls `recap`
 
 ### `/nol:quick` (fast, good quality)
-5 agents: Context → Research + Solution + Impact + Test-Manual (4 parallel) → writes SUMMARY.md → calls `recap`
+5–6 agents: reads mistakes → Context → Research + Solution + Impact + Test-Manual (4 parallel) → writes SUMMARY.md → Learn (background, if references previous work) → calls `recap`
 
-### `/nol:bugfix` (mostly foreground, 1 background agent)
-Self: BUG.md → systematic-debugging skill → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md → Test-Manual (background) → TEST_MANUAL.md → SUMMARY.md → NW-7 feedback loop
+### `/nol:bugfix` (mostly foreground, 1–2 background agents)
+reads mistakes + detects reference → Self: BUG.md → systematic-debugging skill → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md → Test-Manual (background) → TEST_MANUAL.md → SUMMARY.md → Learn (background, if references previous work) → NW-7 feedback loop
 
 ### `/nol:recap`
 Reads plan files + checks actual codebase to verify implementation status → feedback loop → recommends `approve`
@@ -54,6 +64,7 @@ All planning output is written to the **target project's** `.nol/` directory:
 - `.nol/feature/{n}-{name}/` — FEATURE.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/bugfix/{n}-{name}/` — BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/quick/{n}-{name}/` — REQUIREMENT.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
+- `.nol/mistake/{YYYY-MM-DD}.md` — lesson learned เมื่อ nol pipeline พลาด (เขียนโดย `learn` agent)
 
 ## Implementation Status Detection (used by recap + backlog)
 
