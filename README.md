@@ -16,6 +16,7 @@ nol gives you a set of `/nol:*` commands that turn a feature description or bug 
 | `/nol:recap` | Review planning progress and verify implementation status against the real codebase |
 | `/nol:approve` | Implement a plan from SOLUTION.md, run tests, and update SUMMARY.md |
 | `/nol:backlog` | Show all pending features, bugfixes, and quick tasks |
+| `/nol:done` | Mark an item as implemented when it was committed outside the nol pipeline |
 
 ## Pipelines
 
@@ -112,6 +113,8 @@ All files are written to the **target project's** `.nol/` directory:
 | 🔄 Planning | Has FEATURE.md / BUG.md / REQUIREMENT.md but no SUMMARY.md |
 | 🐛 Open Bugs | Implemented but `## Known Bugs` section has `❌ Open` rows |
 
+> If an item was committed manually (outside the pipeline) and shows as 🔄 Planning, use `/nol:done` to mark it as implemented.
+
 ## Typical Workflow
 
 ```bash
@@ -126,6 +129,9 @@ All files are written to the **target project's** `.nol/` directory:
 
 # 4. Check remaining work
 /nol:backlog
+
+# If you committed a fix directly (outside pipeline) and it shows as 🔄 Planning:
+/nol:done bugfix 3
 ```
 
 ## Installation
@@ -140,7 +146,7 @@ claude plugin install nol
 
 ## Version
 
-Current version: **1.1.4** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
+Current version: **1.1.5** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
 
 ## File Structure
 

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-**nol** is a Claude Code plugin that provides a structured feature development workflow via slash commands and sub-agents. It is installed as a plugin into other projects and adds commands like `/nol:feature`, `/nol:quick`, `/nol:bugfix`, `/nol:recap`, `/nol:approve`, `/nol:backlog`. It also has an internal `learn` agent for recording lessons learned.
+**nol** is a Claude Code plugin that provides a structured feature development workflow via slash commands and sub-agents. It is installed as a plugin into other projects and adds commands like `/nol:feature`, `/nol:quick`, `/nol:bugfix`, `/nol:recap`, `/nol:approve`, `/nol:backlog`, `/nol:done`. It also has an internal `learn` agent for recording lessons learned.
 
 ## When Adding New Features to nol
 
@@ -56,7 +56,10 @@ Reads plan files + checks actual codebase to verify implementation status → fe
 Reads SOLUTION.md + TEST_MANUAL.md → implements → runs tests until all pass → updates SUMMARY.md → recommends `backlog`
 
 ### `/nol:backlog`
-Scans `.nol/feature/`, `.nol/bugfix/`, `.nol/quick/` in the target project for pending items
+Scans `.nol/feature/`, `.nol/bugfix/`, `.nol/quick/` in the target project for pending items. Cross-references git log for 🔄 Planning items to detect possibly-committed work.
+
+### `/nol:done`
+Marks a feature/bugfix/quick item as Implemented when it was implemented outside the nol pipeline. Creates/updates SUMMARY.md with `## Implementation Report` so backlog tracks it correctly. Cross-references git log to find related commits.
 
 ## Output Location (in target project)
 
@@ -70,5 +73,5 @@ All planning output is written to the **target project's** `.nol/` directory:
 
 - **✅ Implemented** — has SUMMARY.md with `## Implementation Report` section
 - **📋 Ready** — has SUMMARY.md + SOLUTION.md but no Implementation Report
-- **🔄 Planning** — has FEATURE.md/BUG.md/REQUIREMENT.md but no SUMMARY.md
+- **🔄 Planning** — has FEATURE.md/BUG.md/REQUIREMENT.md but no SUMMARY.md (use `/nol:done` if already implemented outside pipeline)
 - **🐛 Open Bugs** — Implemented but `## Known Bugs` section has `❌ Open` rows

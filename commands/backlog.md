@@ -63,6 +63,7 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 
 **🔄 Planning in Progress (plan ยังไม่สมบูรณ์)**
 - ไม่มี `SUMMARY.md` แต่มีอย่างน้อย `FEATURE.md`, `BUG.md` หรือ `REQUIREMENT.md`
+- ตรวจ git log เพิ่มเติม: รัน `git log --oneline -30` แล้ว match keyword จากชื่อ directory กับ commit messages — ถ้าเจอ commit ที่น่าจะเกี่ยวข้อง ให้แสดง `⚠️ อาจถูก commit แล้ว` พร้อม commit hash ใน Preview column
 
 **⚠️ Incomplete (ข้อมูลไม่พอ)**
 - directory ว่างเปล่า หรือไม่มีไฟล์ที่คาดหวัง
@@ -109,6 +110,7 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 ใช้ `/nol:approve feature 2` หรือ `/nol:approve bugfix 1` หรือ `/nol:approve quick 1` เพื่อ implement
 ใช้ `/nol:approve feature 1 bugfix 1` เพื่อ implement bugfix ภายใน feature
 ใช้ `/nol:recap quick 1` เพื่อดูรายละเอียดก่อน approve
+ใช้ `/nol:done bugfix 3` ถ้า item ถูก implement ไปแล้วนอก pipeline (จะ mark เป็น done โดยไม่ต้อง implement ใหม่)
 ```
 
 - เรียง Features ก่อน แล้วตามด้วย Bugfixes แล้วตามด้วย Quick Tasks
