@@ -43,9 +43,15 @@ Phase 2 (4×, parallel):   Research  |  Solution  |  Impact  |  Test-Manual
           Write SUMMARY.md → /nol:recap (feedback loop)
 ```
 
-### `/nol:bugfix` — 0 background agents
+### `/nol:bugfix` — 1 background agent
 
-Runs entirely in foreground: investigate → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md → SUMMARY.md → feedback loop
+```
+Foreground:               investigate → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md
+          ↓
+NW-5.5 (1×, background):  test-manual agent → TEST_MANUAL.md
+          ↓
+          Write SUMMARY.md → feedback loop
+```
 
 ## Output Structure
 
@@ -66,6 +72,7 @@ All files are written to the **target project's** `.nol/` directory:
 │   ├── RESEARCH.md
 │   ├── ROOTCAUSE.md
 │   ├── SOLUTION.md
+│   ├── TEST_MANUAL.md
 │   └── SUMMARY.md
 │
 └── quick/{n}-{name}/

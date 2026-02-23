@@ -212,13 +212,25 @@ Use Skill tool: systematic-debugging
 
 ---
 
+### NW-5.5: สร้าง TEST_MANUAL.md
+
+Launch **1 test-manual agent** กับ `run_in_background: true`:
+
+| Agent | subagent_type | Prompt Variables |
+|-------|--------------|------------------|
+| Test Planner | `test-manual` | `FEATURE_DESCRIPTION` = bug description, `IMPACT_MD_PATH` = `{BUGFIX_DIR}/ROOTCAUSE.md` (ใช้แทน IMPACT.md — มีรายการไฟล์ที่เกี่ยวข้อง), `SOLUTION_MD_PATH` = `{BUGFIX_DIR}/SOLUTION.md`, `OUTPUT_PATH` = `{BUGFIX_DIR}/TEST_MANUAL.md` |
+
+ใช้ `TaskOutput` รอจนเสร็จก่อนไป NW-6
+
+---
+
 ### NW-6: เขียน SUMMARY.md และ Present
 
 เขียน `{BUGFIX_DIR}/SUMMARY.md` สรุปสั้นๆ แล้ว present ให้ user:
 - Root cause ที่เจอ
 - Fix approach
 - Files ที่จะแก้
-- Links ไปทุกไฟล์ (BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md)
+- Links ไปทุกไฟล์ (BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md)
 
 ---
 
@@ -253,14 +265,16 @@ NW-4 (self):  Write ROOTCAUSE.md (after root cause confirmed)
        ↓
 NW-5 (self):  Write SOLUTION.md
        ↓
+NW-5.5 (1 background):  test-manual agent → TEST_MANUAL.md
+       ↓ wait
 NW-6 (self):  Write SUMMARY.md → Present to user
        ↓
 NW-7:  Feedback loop
         ├─ Approved → Implement immediately (Phase 4 of systematic-debugging)
-        └─ Changes  → Update ROOTCAUSE.md / RESEARCH.md / SOLUTION.md → Repeat NW-7
+        └─ Changes  → Update ROOTCAUSE.md / RESEARCH.md / SOLUTION.md / TEST_MANUAL.md → Repeat NW-7
 ```
 
-**Total agents: 0** — ทำทุกอย่างใน foreground ไม่มี background sub-agents
+**Total agents: 1** — test-manual agent (background, NW-5.5)
 
 ---
 

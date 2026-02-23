@@ -36,8 +36,8 @@ agents/       — sub-agents launched by commands (internal)
 ### `/nol:quick` (fast, good quality)
 5 agents: Context → Research + Solution + Impact + Test-Manual (4 parallel) → writes SUMMARY.md → calls `recap`
 
-### `/nol:bugfix` (foreground only, no sub-agents)
-Self: BUG.md → systematic-debugging skill → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md → SUMMARY.md → NW-7 feedback loop
+### `/nol:bugfix` (mostly foreground, 1 background agent)
+Self: BUG.md → systematic-debugging skill → RESEARCH.md → ROOTCAUSE.md → SOLUTION.md → Test-Manual (background) → TEST_MANUAL.md → SUMMARY.md → NW-7 feedback loop
 
 ### `/nol:recap`
 Reads plan files + checks actual codebase to verify implementation status → feedback loop → recommends `approve`
@@ -52,7 +52,7 @@ Scans `.nol/feature/`, `.nol/bugfix/`, `.nol/quick/` in the target project for p
 
 All planning output is written to the **target project's** `.nol/` directory:
 - `.nol/feature/{n}-{name}/` — FEATURE.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
-- `.nol/bugfix/{n}-{name}/` — BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, SUMMARY.md
+- `.nol/bugfix/{n}-{name}/` — BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/quick/{n}-{name}/` — REQUIREMENT.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 
 ## Implementation Status Detection (used by recap + backlog)
