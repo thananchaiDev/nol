@@ -123,7 +123,7 @@ Install as a Claude Code plugin pointing to this repository:
 
 ## Version
 
-Current version: **1.1.2** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
+Current version: **1.1.3** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
 
 ## File Structure
 
