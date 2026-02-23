@@ -86,6 +86,7 @@ Write to `OUTPUT_PATH` with this structure:
 ## Rules
 
 - Follow the existing code style and patterns discovered in RESEARCH.md.
+- **When referencing a component as a pattern, read its full JSX structure** — verify where each element is placed relative to any gate, guard, or wrapper (what's inside vs. outside). Do not assume placement from style alone; read the actual component tree before proposing a similar structure.
 - Show real code snippets — don't just describe changes abstractly.
 - Order implementation steps by dependency — independent steps should be noted as parallelizable.
 - Keep the solution as simple as possible — avoid over-engineering.

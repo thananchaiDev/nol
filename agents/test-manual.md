@@ -105,3 +105,5 @@ Quick end-to-end checks to run after deployment:
   - `browser` — ทดสอบด้วยตัวเองผ่าน Chrome DevTools หรือ UI บน browser (ไม่ใช่ automated test)
   - `api` — ทดสอบด้วยตัวเองโดยยิง curl หรือเรียก API หลังบ้านโดยตรง (ไม่ใช่ automated test)
 - **ห้ามใช้ type:** `unit`, `e2e`, `integration`, `manual`, `db` หรือ type ใดที่สื่อถึงการเขียน automated test script
+- **Gate/Guard — ต้องครบทุก state:** ถ้า feature อยู่ใน scope เดียวกับ gate หรือ guard component ต้องสร้าง test case ครบทุก state เสมอ ได้แก่: (1) ก่อน gate ผ่าน (no-credentials / loading / unauthenticated) และ (2) หลัง gate ผ่าน (has-credentials / authenticated) ห้ามมี test cases ทุกข้อใช้ precondition "หลัง gate ผ่าน" อย่างเดียว
+- **Expected behavior ต้องอ้างอิง Acceptance Criteria:** ก่อนเขียน expected result ต้องอ่าน Acceptance Criteria ใน FEATURE.md (หรือไฟล์ requirement ที่เกี่ยวข้อง) เพื่อระบุว่า element แต่ละชิ้นควรเป็น "always visible" หรือ "gate-controlled" ห้ามสมมุติหรือเดาเอง — expected ที่เขียนผิด (เช่น ยอมรับว่าซ่อนอยู่ทั้งที่ควร always visible) ทำให้ test ผ่านแม้ code จะ broken
