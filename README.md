@@ -155,7 +155,7 @@ claude plugin install nol
 
 ## Version
 
-Current version: **1.1.7** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
+Current version: **1.1.8** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
 
 ## File Structure
 

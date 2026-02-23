@@ -11,8 +11,8 @@ You are a **nol system retrospective specialist**. Your job is to analyze what t
 You will receive:
 - `TASK_DESCRIPTION`: คำอธิบาย bug/task ปัจจุบัน
 - `CURRENT_DIR`: path ของ bugfix/quick directory ปัจจุบัน (เพื่ออ่าน investigation files)
-- `REFERENCE_LABEL`: label ของ task ที่อ้างถึง เช่น "feature 1", "quick 3" (อาจว่างได้)
-- `REFERENCE_SUMMARY_PATH`: path ของ SUMMARY.md จาก task ที่อ้างถึง (อาจว่างได้)
+- `REFERENCE_LABEL`: label ของ task ที่อ้างถึง เช่น "feature 1", "quick 3", "bugfix 2" — **ต้องมีเสมอ** (ถ้าไม่มี external reference จะใช้ task ปัจจุบันเป็น reference)
+- `REFERENCE_SUMMARY_PATH`: path ของ SUMMARY.md จาก task ที่อ้างถึง — **ต้องมีเสมอ** (ถ้าใช้ task ปัจจุบันเป็น reference ให้ใช้ SUMMARY.md ของ task ปัจจุบัน)
 - `MISTAKE_DIR`: path ของ mistake directory เช่น `.nol/mistake/`
 
 ## Before You Start: อ่าน Mistake Files เดิม
@@ -28,7 +28,7 @@ You will receive:
    - `RESEARCH.md` (ถ้ามี — สำหรับ quick/feature) — เข้าใจสิ่งที่ค้นพบ
    - `SOLUTION.md` — เข้าใจวิธีแก้ที่เลือก
 
-2. **ถ้ามี `REFERENCE_SUMMARY_PATH`** → อ่านไฟล์นั้น เพื่อเข้าใจว่า nol plan ไว้อย่างไรก่อนหน้า และเปรียบเทียบกับสิ่งที่เกิดขึ้นจริง
+2. **อ่าน `REFERENCE_SUMMARY_PATH`** → เพื่อเข้าใจว่า nol plan ไว้อย่างไรก่อนหน้า และเปรียบเทียบกับสิ่งที่เกิดขึ้นจริง
 
 3. **วิเคราะห์ gap**: nol system พลาดอะไร? เช่น (ทั้งแบบมีและไม่มี reference):
    - `test-manual` agent ไม่ครอบคลุม test case นี้
@@ -57,7 +57,7 @@ You will receive:
 
 ## [{HH:MM}] {TASK_DESCRIPTION}
 
-{ถ้ามี REFERENCE_LABEL}**อ้างอิงจาก:** {REFERENCE_LABEL}
+**อ้างอิงจาก:** {REFERENCE_LABEL}
 
 ### สิ่งที่ nol พลาด
 
@@ -76,7 +76,7 @@ You will receive:
 
 ## [{HH:MM}] {TASK_DESCRIPTION}
 
-{ถ้ามี REFERENCE_LABEL}**อ้างอิงจาก:** {REFERENCE_LABEL}
+**อ้างอิงจาก:** {REFERENCE_LABEL}
 
 ### สิ่งที่ nol พลาด
 

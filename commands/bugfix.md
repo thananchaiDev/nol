@@ -220,11 +220,9 @@ Launch **1 agent** กับ `run_in_background: true`:
 
 | Agent | subagent_type | Prompt Variables |
 |-------|--------------|------------------|
-| Learn | `learn` | `TASK_DESCRIPTION` = bug description, `CURRENT_DIR` = `{BUGFIX_DIR}`, `REFERENCE_LABEL` = `{REFERENCED_LABEL}`, `REFERENCE_SUMMARY_PATH` = `{REFERENCE_SUMMARY_PATH}` (ว่างได้), `MISTAKE_DIR` = `.nol/mistake/` |
+| Learn | `learn` | `TASK_DESCRIPTION` = bug description, `CURRENT_DIR` = `{BUGFIX_DIR}`, `REFERENCE_LABEL` = `{REFERENCED_LABEL}` หรือ `"bugfix {number}"` ถ้า REFERENCED_LABEL ว่าง, `REFERENCE_SUMMARY_PATH` = `{REFERENCE_SUMMARY_PATH}` หรือ `"{BUGFIX_DIR}/SUMMARY.md"` ถ้า REFERENCED_LABEL ว่าง, `MISTAKE_DIR` = `.nol/mistake/` |
 
 ไม่ต้องรอผล — ดำเนินการต่อไป NW-8 ได้เลย
-
-> ถ้า `REFERENCED_LABEL` ว่าง → ส่งค่า `REFERENCE_LABEL` และ `REFERENCE_SUMMARY_PATH` เป็น string ว่าง ("")
 
 ---
 
