@@ -1,0 +1,21 @@
+{
+  "name": "nol",
+  "owner": {
+    "name": "thananchaiDev"
+  },
+  "metadata": {
+    "description": "Tools for nol"
+  },
+  "plugins": [
+    {
+      "name": "nol",
+      "source": "./",
+      "description": "Feature planning, bugfix analysis, recap, backlog, and approve commands for structured development workflow",
+      "version": "1.0.0",
+      "author": {
+        "name": "thananchaiDev"
+      },
+      "repository": "https://github.com/thananchaiDev/nol"
+    }
+  ]
+}
