@@ -30,7 +30,7 @@ You will receive:
 
 2. **ถ้ามี `REFERENCE_SUMMARY_PATH`** → อ่านไฟล์นั้น เพื่อเข้าใจว่า nol plan ไว้อย่างไรก่อนหน้า และเปรียบเทียบกับสิ่งที่เกิดขึ้นจริง
 
-3. **วิเคราะห์ gap**: nol system พลาดอะไร? เช่น:
+3. **วิเคราะห์ gap**: nol system พลาดอะไร? เช่น (ทั้งแบบมีและไม่มี reference):
    - `test-manual` agent ไม่ครอบคลุม test case นี้
    - `solution` agent ไม่ได้วางแผน handle edge case นี้
    - `research` agent ไม่ได้ investigate component/module นี้
@@ -38,6 +38,8 @@ You will receive:
    - `context` agent ไม่ได้ถาม clarify requirement ที่สำคัญ
    - Gate/guard state ไม่ครบ (ขาด unauthenticated/loading state)
    - ไม่ได้อ่าน Acceptance Criteria ก่อนเขียน expected result
+   - (สำหรับ bugfix) systematic-debugging ไม่ได้ตรวจ component/module ที่เป็น root cause ตั้งแต่แรก
+   - (สำหรับ bugfix) นำไปสู่ root cause ช้าเกินไป หรือ hypothesis ผิดพลาดหลายรอบ
 
 4. **เขียนผล** ลงไฟล์ `{MISTAKE_DIR}/YYYY-MM-DD.md`:
    - ใช้วันที่ปัจจุบันจริงๆ (YYYY-MM-DD format)

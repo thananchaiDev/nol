@@ -108,6 +108,9 @@ Write to `OUTPUT_PATH` with this structure:
   - `[ ] Placement` — where exactly does the fix go? Read the surrounding context.
   - `[ ] Logic` — does the fix handle all edge cases the root cause exposes?
   - `[ ] Side effects` — could this change break adjacent behavior?
+- **Custom Combobox/Dropdown with search state:** เมื่อออกแบบ fix ที่เกี่ยวกับ custom dropdown/combobox ที่มี search/filter state ต้องระบุให้ชัดเจนว่า:
+  - ต้อง reset filter state เมื่อ dropdown เปิด (open) — ห้ามปล่อยให้ค่าจาก selection ก่อนหน้าค้างอยู่เป็น filter
+  - ถ้า state ชิ้นเดียวทำหน้าที่ทั้ง "แสดงค่าที่เลือก" และ "filter list" ต้องแยกออกเป็น 2 state อิสระ (`displayValue` vs `filterQuery`)
 - Show real code snippets — not abstract descriptions.
 - Write in the same language the user used in the bug description.
 - DO NOT implement the fix. Only design the solution on paper.

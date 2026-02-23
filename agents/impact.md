@@ -95,4 +95,5 @@ Write to `OUTPUT_PATH` with this structure:
 - Think about both direct and indirect effects (e.g., changing a DB column might affect cached queries).
 - Consider backward compatibility — will existing API consumers break?
 - Rate risks honestly — don't downplay potential issues.
+- **Dual-purpose state — flag เสมอ:** ถ้าพบ state ที่ทำหน้าที่ 2 อย่างพร้อมกัน (เช่น ใช้ state เดียวทั้งเป็น display value และ filter query) ต้องระบุใน Risk Assessment ว่ามี regression risk ระดับ Medium ขึ้นไป พร้อม mitigation ว่าควรแยกเป็น 2 state อิสระ
 - Write in the same language the user used in the description.
