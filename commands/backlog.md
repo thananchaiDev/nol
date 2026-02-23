@@ -1,21 +1,27 @@
+---
+description: "แสดง backlog รายการ feature/bugfix/quick ที่รอ implement"
+---
+
 # Backlog - แสดงรายการงานที่ plan แล้วแต่ยังไม่ได้ implement
 
-สแกน `.nol/feature/` และ `.nol/bugfix/` เพื่อหา item ที่มี plan แต่ยังรอ implement
+สแกน `.nol/feature/`, `.nol/bugfix/` และ `.nol/quick/` เพื่อหา item ที่มี plan แต่ยังรอ implement
 
 ## Usage
 
 ```
-/backlog              แสดง backlog ทั้งหมด (feature + bugfix)
-/backlog feature      แสดงเฉพาะ feature backlog
-/backlog bugfix       แสดงเฉพาะ bugfix backlog
+/nol:backlog              แสดง backlog ทั้งหมด (feature + bugfix + quick)
+/nol:backlog feature      แสดงเฉพาะ feature backlog
+/nol:backlog bugfix       แสดงเฉพาะ bugfix backlog
+/nol:backlog quick        แสดงเฉพาะ quick task backlog
 ```
 
 ## Instructions
 
 Parse `$ARGUMENTS` เพื่อกำหนด scope:
-- ไม่มี argument หรือ `all` → สแกนทั้ง feature และ bugfix
+- ไม่มี argument หรือ `all` → สแกนทั้ง feature, bugfix และ quick
 - `feature` → สแกนเฉพาะ `.nol/feature/`
 - `bugfix` → สแกนเฉพาะ `.nol/bugfix/`
+- `quick` → สแกนเฉพาะ `.nol/quick/`
 
 ---
 
@@ -24,8 +30,9 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 ตรวจ directory ตาม scope:
 - Feature: `.nol/feature/*/`
 - Bugfix: `.nol/bugfix/*/`
+- Quick: `.nol/quick/*/`
 
-ถ้าไม่มี `.nol/` เลย → แจ้ง user ว่า "ยังไม่มี feature หรือ bugfix ใดถูก plan ไว้" แล้วหยุด
+ถ้าไม่มี `.nol/` เลย → แจ้ง user ว่า "ยังไม่มี feature, bugfix หรือ quick task ใดถูก plan ไว้" แล้วหยุด
 
 ---
 
@@ -47,7 +54,7 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 - มี `SOLUTION.md` อยู่ด้วย
 
 **🔄 Planning in Progress (plan ยังไม่สมบูรณ์)**
-- ไม่มี `SUMMARY.md` แต่มีอย่างน้อย `FEATURE.md` หรือ `BUG.md`
+- ไม่มี `SUMMARY.md` แต่มีอย่างน้อย `FEATURE.md`, `BUG.md` หรือ `REQUIREMENT.md`
 
 **⚠️ Incomplete (ข้อมูลไม่พอ)**
 - directory ว่างเปล่า หรือไม่มีไฟล์ที่คาดหวัง
@@ -58,7 +65,10 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 
 สำหรับ item ที่มีสถานะ **📋 Ready** หรือ **🔄 Planning**:
 - ถ้ามี `SUMMARY.md` → อ่าน 2-3 บรรทัดแรกของส่วนเนื้อหา (ข้าม header) มาใช้เป็น preview
-- ถ้าไม่มี `SUMMARY.md` แต่มี `FEATURE.md` หรือ `BUG.md` → อ่าน description 1-2 บรรทัดแรก
+- ถ้าไม่มี `SUMMARY.md`:
+  - feature → อ่าน `FEATURE.md` description 1-2 บรรทัดแรก
+  - bugfix → อ่าน `BUG.md` description 1-2 บรรทัดแรก
+  - quick → อ่าน `REQUIREMENT.md` description 1-2 บรรทัดแรก
 
 ---
 
@@ -75,6 +85,8 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 | Feature | 3 | user-auth | 🔄 Planning | ระบบ login สำหรับ admin... |
 | Feature | 1 | add-feature | 🐛 Open Bugs (1) | มี bug ค้างอยู่ใน... |
 | Bugfix | 1 | sender-data-cleared | 📋 Ready | ข้อมูล sender ถูกเคลียร์เมื่อ... |
+| Quick | 1 | email-validation | 📋 Ready | เพิ่ม validation ตรวจ email... |
+| Quick | 2 | refactor-total | 🔄 Planning | refactor function calculateTotal... |
 
 #### 🐛 Open Bugs ใน Features (ถ้ามี)
 | Feature | Bug # | คำอธิบาย | Folder |
@@ -86,12 +98,12 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 🔄 Planning in progress: {total} รายการ
 🐛 Open bugs in features: {total} รายการ
 
-ใช้ `/approve feature 2` หรือ `/approve bugfix 1` เพื่อ implement
-ใช้ `/approve feature 1 bugfix 1` เพื่อ implement bugfix ภายใน feature
-ใช้ `/recap feature 2` เพื่อดูรายละเอียดก่อน approve
+ใช้ `/nol:approve feature 2` หรือ `/nol:approve bugfix 1` หรือ `/nol:approve quick 1` เพื่อ implement
+ใช้ `/nol:approve feature 1 bugfix 1` เพื่อ implement bugfix ภายใน feature
+ใช้ `/nol:recap quick 1` เพื่อดูรายละเอียดก่อน approve
 ```
 
-- เรียง Features ก่อน แล้วตามด้วย Bugfixes
+- เรียง Features ก่อน แล้วตามด้วย Bugfixes แล้วตามด้วย Quick Tasks
 - ถ้าไม่มี Open Bugs ใน Features ให้ข้ามส่วน `🐛 Open Bugs ใน Features`
 
 ถ้าไม่มี backlog เลย (ทุก item เสร็จแล้ว) ให้แสดง:
@@ -108,7 +120,7 @@ Parse `$ARGUMENTS` เพื่อกำหนด scope:
 > "อยากดูรายละเอียดของ item ไหน หรือ approve ให้ implement เลยไหมครับ?"
 
 **ถ้า user ระบุ item ที่ต้องการดู** → อ่าน SUMMARY.md ของ item นั้นแล้วสรุปเหมือน `/recap`
-**ถ้า user ต้องการ approve** → แจ้งให้ใช้คำสั่ง `/approve [type] [number]`
+**ถ้า user ต้องการ approve** → แจ้งให้ใช้คำสั่ง `/nol:approve [type] [number]`
 **ถ้า user ไม่ต้องการอะไรเพิ่ม** → จบ
 
 ---
