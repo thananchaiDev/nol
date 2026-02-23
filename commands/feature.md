@@ -28,13 +28,23 @@ Create a structured feature folder using specialized sub-agents with dual-draft 
 
 Parse `$ARGUMENTS` as the feature description.
 
-### Step 0: อ่าน Mistake Files
+### Step 0: อ่าน Mistake Files และ Knowledge
 
 ก่อนเริ่มทำงาน:
+
+**A. อ่าน Mistake Files:**
 
 1. ใช้ Glob tool หา `.nol/mistake/*.md`
 2. ถ้ามี → Read ทุกไฟล์ และนำมาเป็น context เพื่อ avoid ข้อผิดพลาดซ้ำ
 3. ถ้าไม่มี → ข้ามไปเงียบๆ
+
+**B. อ่าน Project Knowledge:**
+
+1. ใช้ Glob tool หา `.nol/knowledge.md`
+2. ถ้ามี → Read ไฟล์ และนำมาเป็น context พื้นฐานของ project
+3. ถ้าไม่มี → Launch **knowledge agent** กับ `run_in_background: true` (ไม่รอผล):
+   - `PROJECT_ROOT` = `.`
+   - `KNOWLEDGE_FILE` = `.nol/knowledge.md`
 
 ### Step 1: Determine Feature Number & Name
 
@@ -124,6 +134,8 @@ Launch **1 agent** with `run_in_background: true`:
 ## Agent Execution Flow
 
 ```
+Step 0:  Read .nol/mistake/*.md + Read .nol/knowledge.md (or launch knowledge bg, no wait)
+         ↓
 Phase 1a (3 background):  A1 (Context → FEATURE.md)  |  A2 + A3 (Research)
          ↓ wait all 3
 Phase 1b (1 background):  Confirm-Research → RESEARCH.md

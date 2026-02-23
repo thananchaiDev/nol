@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Repo Is
 
-**nol** is a Claude Code plugin that provides a structured feature development workflow via slash commands and sub-agents. It is installed as a plugin into other projects and adds commands like `/nol:feature`, `/nol:quick`, `/nol:bugfix`, `/nol:recap`, `/nol:approve`, `/nol:backlog`, `/nol:done`. It also has an internal `learn` agent for recording lessons learned.
+**nol** is a Claude Code plugin that provides a structured feature development workflow via slash commands and sub-agents. It is installed as a plugin into other projects and adds commands like `/nol:feature`, `/nol:quick`, `/nol:bugfix`, `/nol:recap`, `/nol:approve`, `/nol:backlog`, `/nol:done`. It also has internal agents: `learn` for recording lessons learned, and `knowledge` for capturing project context.
 
 ## When Adding New Features to nol
 
@@ -26,6 +26,7 @@ Version is stored in **three files** — all must be updated together:
 ```
 commands/     — slash commands invoked by the user (/nol:<name>)
 agents/       — sub-agents launched by commands (internal)
+  knowledge.md    — analyzes the project and writes .nol/knowledge.md (launched by feature/quick/bugfix)
   learn.md        — records nol pipeline mistakes as lesson learned
   bug-research.md — digs codebase for bugs (launched by bugfix)
   bug-rootcause.md — confirms root cause from research (launched by bugfix)
@@ -44,13 +45,13 @@ agents/       — sub-agents launched by commands (internal)
 ## Command → Agent Pipeline
 
 ### `/nol:feature` (slow, high quality)
-7 agents: Context + 2× Research (parallel) → Confirm-Research → Impact + Solution (parallel) → Test-Manual → writes SUMMARY.md → calls `recap`
+7 agents: reads mistakes + reads knowledge (or launches knowledge bg) → Context + 2× Research (parallel) → Confirm-Research → Impact + Solution (parallel) → Test-Manual → writes SUMMARY.md → calls `recap`
 
 ### `/nol:quick` (fast, good quality)
-5–6 agents: reads mistakes → Context → Research + Solution + Impact + Test-Manual (4 parallel) → writes SUMMARY.md → Learn (background, if references previous work) → calls `recap`
+6 agents: reads mistakes + detects reference + reads knowledge (or launches knowledge bg) → Context → Research (sequential, wait) → Solution + Impact + Test-Manual (3 parallel) → writes SUMMARY.md → Learn (background, always) → calls `recap`
 
 ### `/nol:bugfix` (investigate foreground + 4 background agents sequential)
-reads mistakes + detects reference → Self: BUG.md → Investigate live evidence (logs, DevTools, no code reading) → RESEARCH.md (live) → bug-research (bg, wait) → RESEARCH.md (full) → bug-rootcause (bg, wait) → ROOTCAUSE.md → bug-solution (bg, wait) → SOLUTION.md → test-manual (bg, wait) → TEST_MANUAL.md → SUMMARY.md → Learn (background, always) → NW-8 feedback loop
+reads mistakes + detects reference + reads knowledge (or launches knowledge bg) → Self: BUG.md → Investigate live evidence (logs, DevTools, no code reading) → RESEARCH.md (live) → bug-research (bg, wait) → RESEARCH.md (full) → bug-rootcause (bg, wait) → ROOTCAUSE.md → bug-solution (bg, wait) → SOLUTION.md → test-manual (bg, wait) → TEST_MANUAL.md → SUMMARY.md → Learn (background, always) → NW-8 feedback loop
 
 ### `/nol:recap`
 Reads plan files + checks actual codebase to verify implementation status → feedback loop → recommends `approve`
@@ -71,6 +72,7 @@ All planning output is written to the **target project's** `.nol/` directory:
 - `.nol/bugfix/{n}-{name}/` — BUG.md, RESEARCH.md, ROOTCAUSE.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/quick/{n}-{name}/` — REQUIREMENT.md, RESEARCH.md, IMPACT.md, SOLUTION.md, TEST_MANUAL.md, SUMMARY.md
 - `.nol/mistake/{YYYY-MM-DD}.md` — lesson learned เมื่อ nol pipeline พลาด (เขียนโดย `learn` agent)
+- `.nol/knowledge.md` — project context (type, stack, purpose) สร้างครั้งแรกและใช้ซ้ำ (เขียนโดย `knowledge` agent)
 
 ## Implementation Status Detection (used by recap + backlog)
 

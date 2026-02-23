@@ -23,6 +23,8 @@ nol gives you a set of `/nol:*` commands that turn a feature description or bug 
 ### `/nol:feature` — 7 agents
 
 ```
+Step 0:                   Read .nol/mistake/* + read .nol/knowledge.md (or launch knowledge bg)
+          ↓
 Phase 1a (3×, parallel):  Context  |  Research #1  |  Research #2
           ↓
 Phase 1b (1×):            Confirm-Research → RESEARCH.md
@@ -34,10 +36,11 @@ Phase 3  (1×):            Test-Manual → TEST_MANUAL.md
           Write SUMMARY.md → /nol:recap (feedback loop)
 ```
 
-### `/nol:quick` — 5–6 agents
+### `/nol:quick` — 6 agents
 
 ```
 Step 0:                   Read .nol/mistake/* + detect reference
+                          + read .nol/knowledge.md (or launch knowledge bg)
           ↓
 Phase 1 (1×):             Context → REQUIREMENT.md
           ↓
@@ -47,7 +50,7 @@ Phase 3 (3×, parallel):   Solution  |  Impact  |  Test-Manual
           ↓
           Write SUMMARY.md
           ↓
-Step 4.5 (1×, bg, if ref): learn agent → .nol/mistake/YYYY-MM-DD.md
+Step 4.5 (1×, bg, always): learn agent → .nol/mistake/YYYY-MM-DD.md
           ↓
           /nol:recap (feedback loop)
 ```
@@ -56,6 +59,7 @@ Step 4.5 (1×, bg, if ref): learn agent → .nol/mistake/YYYY-MM-DD.md
 
 ```
 NW-0 (self):              Read .nol/mistake/* + detect reference
+                          + read .nol/knowledge.md (or launch knowledge bg)
           ↓
 NW-1 (self):              Create BUG.md
           ↓
@@ -107,8 +111,10 @@ All files are written to the **target project's** `.nol/` directory:
 │   ├── TEST_MANUAL.md
 │   └── SUMMARY.md
 │
-└── mistake/
-    └── YYYY-MM-DD.md     Lesson learned เมื่อ nol pipeline พลาด
+├── mistake/
+│   └── YYYY-MM-DD.md     Lesson learned เมื่อ nol pipeline พลาด
+│
+└── knowledge.md          Project context (type, stack, purpose) — สร้างครั้งแรก ใช้ซ้ำ
 ```
 
 ## Implementation Status Detection
@@ -155,13 +161,14 @@ claude plugin install nol
 
 ## Version
 
-Current version: **1.1.8** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
+Current version: **1.1.9** — defined in both `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`.
 
 ## File Structure
 
 ```
 commands/               Slash commands (/nol:<name>)
 agents/                 Sub-agents launched internally by commands
+  knowledge.md          Analyzes the project and writes .nol/knowledge.md
   learn.md              Records nol pipeline mistakes as lesson learned
   bug-research.md       Digs codebase for bugs using live evidence as guide
   bug-rootcause.md      Confirms root cause from research findings

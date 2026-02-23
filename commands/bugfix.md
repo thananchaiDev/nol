@@ -36,7 +36,7 @@ Investigate bug จากของจริง (logs, browser, network) ใน f
 
 ---
 
-### NW-0: อ่าน Mistake Files และตรวจ Reference
+### NW-0: อ่าน Mistake Files, ตรวจ Reference และ Knowledge
 
 **A. อ่าน Mistake Files:**
 
@@ -52,6 +52,14 @@ Investigate bug จากของจริง (logs, browser, network) ใน f
   - ค้นหา directory ที่ match ใน `.nol/{type}/` (เช่น `.nol/feature/1-*/`)
   - ตั้งค่า `REFERENCE_SUMMARY_PATH` = path ของ SUMMARY.md ที่เจอ (ถ้ามี)
 - ถ้าไม่มี reference → ตั้งค่า `REFERENCED_LABEL` = `""` (ว่าง)
+
+**C. อ่าน Project Knowledge:**
+
+1. ใช้ Glob tool หา `.nol/knowledge.md`
+2. ถ้ามี → Read ไฟล์ และนำมาเป็น context พื้นฐานของ project
+3. ถ้าไม่มี → Launch **knowledge agent** กับ `run_in_background: true` (ไม่รอผล):
+   - `PROJECT_ROOT` = `.`
+   - `KNOWLEDGE_FILE` = `.nol/knowledge.md`
 
 ---
 
@@ -243,6 +251,7 @@ Launch **1 agent** กับ `run_in_background: true`:
 
 ```
 NW-0 (self):   Read .nol/mistake/*.md + ตรวจ Reference ใน $ARGUMENTS
+               + Read .nol/knowledge.md (or launch knowledge bg, no wait)
        ↓
 NW-1 (self):   Create BUGFIX_DIR + Write BUG.md
        ↓

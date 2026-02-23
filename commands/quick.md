@@ -35,7 +35,7 @@ description: "วิเคราะห์และวางแผน task ขน
 
 Parse `$ARGUMENTS` as the task description.
 
-### Step 0: อ่าน Mistake Files และตรวจ Reference
+### Step 0: อ่าน Mistake Files, ตรวจ Reference และ Knowledge
 
 **A. อ่าน Mistake Files:**
 
@@ -51,6 +51,14 @@ Parse `$ARGUMENTS` as the task description.
   - ค้นหา directory ที่ match ใน `.nol/{type}/`
   - ตั้งค่า `REFERENCE_SUMMARY_PATH` = path ของ SUMMARY.md ที่เจอ (ถ้ามี)
 - ถ้าไม่มี reference → ตั้งค่า `REFERENCED_LABEL` = `""` (ว่าง)
+
+**C. อ่าน Project Knowledge:**
+
+1. ใช้ Glob tool หา `.nol/knowledge.md`
+2. ถ้ามี → Read ไฟล์ และนำมาเป็น context พื้นฐานของ project
+3. ถ้าไม่มี → Launch **knowledge agent** กับ `run_in_background: true` (ไม่รอผล):
+   - `PROJECT_ROOT` = `.`
+   - `KNOWLEDGE_FILE` = `.nol/knowledge.md`
 
 ### Step 1: Determine Number & Name
 
@@ -143,6 +151,7 @@ Launch **1 agent** กับ `run_in_background: true`:
 
 ```
 Step 0:  Read .nol/mistake/*.md + ตรวจ Reference ใน $ARGUMENTS
+         + Read .nol/knowledge.md (or launch knowledge bg, no wait)
          ↓
 Phase 1 (1 background):   A (context → REQUIREMENT.md)
          ↓ wait
